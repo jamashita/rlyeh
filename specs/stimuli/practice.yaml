@@ -1,14 +1,19 @@
 # 練習用の刺激（全参加者に固定で提示し、分析対象外）
 #
 # 構成:
-#   propositions: 言語に依存しない命題のリスト。本文中に登場する順に並べる。
-#                 設問が本文のどの位置の情報を問うかは、命題の並び順から求める。
+#   propositions: 言語に依存しない命題のリスト。summary は作成者向けの説明で、プログラムは使わない。
+#                 並び順は日本語版の本文での登場順としているが、言語によって登場順が異なってもよい。
 #   questions:    言語に依存しない設問の定義。
 #                 answer は正答の選択肢 ID。「本文からはわからない」が正答の場合は not-in-text とする。
 #                 options は具体的な回答候補五つの ID。表示時にシャッフルし、「本文からはわからない」は常に最後に置く。
 #                 trope は設問で問う事実が物語の定番どおりか（follows）、定番から外したか（subverted）、
 #                 定番と関係しないか（none）を表す（AGENTS.md §3.2）。
 #   locales:      言語ごとの本文・設問文・選択肢の文言。
+#                 text では、各命題の内容を担う部分を {p01:…} の形で囲む（AGENTS.md §10）。
+#                   - すべての命題を各言語の本文でちょうど1回ずつ囲む。
+#                   - 囲みは入れ子にせず、重ねない。どの命題にも属さない部分は囲まなくてよい。
+#                   - 参加者に表示するときは囲みの記号を取り除く。
+#                   - 命題の位置（本文の先頭から何文字目か）は、囲みの開始位置と終了位置から書記素単位で数える。
 #                 登場人物の名前は、各言語の母語話者にとって馴染みのある名前にする（言語ごとに異なってよい）。
 #                 命題と選択肢 ID では、名前ではなく「女性」「男性」で人物を表す。
 #                   女性（woman）: ja 美咲 / en Mira
@@ -21,31 +26,33 @@ propositions:
   - id: p01
     summary: 嵐の翌朝、女性が村の東側にある畑を調べるため村を出た
   - id: p02
-    summary: 女性が倒れた木のそばで物体を発見した
+    summary: 物体を発見したのは女性である
   - id: p03
-    summary: 物体は黒い金属製で、四つの白い円が描かれていた
+    summary: 物体は倒れた木のそばで見つかった
   - id: p04
-    summary: 女性が村へ戻り、長老と男性を現場へ連れてきた
+    summary: 物体は黒い金属製で、四つの白い円が描かれていた
   - id: p05
-    summary: 長老は物体に触れずに周囲を調べた
+    summary: 女性が村へ戻り、長老と男性を現場へ連れてきた
   - id: p06
-    summary: 男性が円の一つに触れた
+    summary: 長老は物体に触れずに周囲を調べた
   - id: p07
-    summary: 数秒後、円が黄色に変わった
+    summary: 男性が円の一つに触れた
   - id: p08
-    summary: 物体が人間の形をした機械に変形した
+    summary: 数秒後、円が黄色に変わった
   - id: p09
-    summary: 機械は女性が近づくまで何も話さなかった
+    summary: 物体が人間の形をした機械に変形した
   - id: p10
-    summary: 機械は自分が長年地中に埋まっていたと説明した
+    summary: 機械は女性が近づくまで何も話さなかった
   - id: p11
-    summary: 機械は嵐によって地上に露出したと説明した
+    summary: 機械は自分が長年地中に埋まっていたと説明した
   - id: p12
+    summary: 機械は嵐によって地上に露出したと説明した
+  - id: p13
     summary: 長老が倒れた木に赤い布を結びつけた
 
 questions:
   - id: q01
-    proposition: p09
+    proposition: p10
     trope: none
     answer: woman-approached
     options: [name-called, elder-spoke, woman-approached, group-leaving, sky-darkened]
@@ -55,17 +62,17 @@ questions:
     answer: woman
     options: [man, elder, woman, blacksmith, shepherd]
   - id: q03
-    proposition: p12
+    proposition: p13
     trope: follows
     answer: red-cloth
     options: [white-stone, red-cloth, wooden-sign, blue-rope, metal-rod]
   - id: q04
-    proposition: p06
+    proposition: p07
     trope: subverted
     answer: man
     options: [man, elder, woman, blacksmith, shepherd]
   - id: q05
-    proposition: p10
+    proposition: p11
     trope: none
     answer: not-in-text
     options: [ten-years, twenty-five-years, fifty-years, hundred-years, two-hundred-years]
@@ -75,22 +82,22 @@ questions:
     answer: east
     options: [north, northeast, east, south, west]
   - id: q07
-    proposition: p11
+    proposition: p12
     trope: follows
     answer: storm
     options: [storm, lightning, flood, earthquake, wind]
   - id: q08
-    proposition: p07
+    proposition: p08
     trope: subverted
     answer: yellow
     options: [vanished, blue, red, yellow, stayed-white]
   - id: q09
-    proposition: p02
+    proposition: p03
     trope: follows
     answer: fallen-tree
     options: [fallen-tree, riverbank, old-well, under-rock, field-fence]
   - id: q10
-    proposition: p03
+    proposition: p04
     trope: subverted
     answer: four
     options: [one, two, three, four, five]
@@ -98,7 +105,7 @@ questions:
 locales:
   ja:
     text: >-
-      嵐の翌朝、美咲は村の東側にある畑を調べるため、村を出た。倒れた木のそばで、四つの白い円が描かれた黒い金属製の物体を発見した。彼女は村へ戻り、長老と健太という男性を現場へ連れてきた。長老は物体に触れずにその周囲を調べたが、健太は円の一つに手を触れた。数秒後、円は黄色に変わり、物体は人間の形をした機械へと変形した。その機械は、美咲が近づくまで何も話さなかった。そして、自分は長年地中に埋まっており、嵐によってようやく地上に露出したのだと説明した。村へ戻る前に、長老は再び場所が分かるよう、倒れた木に赤い布を結びつけた。
+      {p01:嵐の翌朝、美咲は村の東側にある畑を調べるため、村を出た。}{p03:倒れた木のそばで}、{p04:四つの白い円が描かれた黒い金属製の物体}を{p02:発見した}。{p05:彼女は村へ戻り、長老と健太という男性を現場へ連れてきた。}{p06:長老は物体に触れずにその周囲を調べたが}、{p07:健太は円の一つに手を触れた}。数秒後、{p08:円は黄色に変わり}、{p09:物体は人間の形をした機械へと変形した}。{p10:その機械は、美咲が近づくまで何も話さなかった}。そして、{p11:自分は長年地中に埋まっており}、{p12:嵐によってようやく地上に露出した}のだと説明した。村へ戻る前に、{p13:長老は再び場所が分かるよう、倒れた木に赤い布を結びつけた}。
     not-in-text: 本文からはわからない
     questions:
       q01:
@@ -183,7 +190,7 @@ locales:
           five: 五つ
   en:
     text: >-
-      The morning after a storm, Mira left her village to inspect the fields on its east side. Near a fallen tree, she discovered a black metal object marked with four white circles. She returned to the village and brought the elder and a man named Thomas to the site. The elder examined the area around the object without touching it, but Thomas placed his hand on one of the circles. A few seconds later, the circles turned yellow and the object transformed into a human-shaped machine. The machine said nothing until Mira approached it. It then explained that it had been buried underground for many years and that the storm had finally exposed it. Before returning to the village, the elder tied a red cloth to the fallen tree so that the location could be found again.
+      {p01:The morning after a storm, Mira left her village to inspect the fields on its east side.} {p03:Near a fallen tree}, {p02:she discovered} {p04:a black metal object marked with four white circles}. {p05:She returned to the village and brought the elder and a man named Thomas to the site.} {p06:The elder examined the area around the object without touching it}, but {p07:Thomas placed his hand on one of the circles}. A few seconds later, {p08:the circles turned yellow} and {p09:the object transformed into a human-shaped machine}. {p10:The machine said nothing until Mira approached it}. It then explained that {p11:it had been buried underground for many years} and that {p12:the storm had finally exposed it}. Before returning to the village, {p13:the elder tied a red cloth to the fallen tree so that the location could be found again}.
     not-in-text: The text does not say
     questions:
       q01:
