@@ -17,12 +17,9 @@ paths:
 
 ## 技術スタック
 
-- Next.js Server Actions
 - Drizzle ORM
-- NextAuth.js 5
 - Inversify (DI container)
 
 ### データベース
 
-- MySQL 8.0 (開発環境、本番はAWS Aurora)
-- DynamoDB (分散ロック用)
+- MySQL 8.0

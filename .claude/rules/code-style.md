@@ -29,7 +29,7 @@ DDD, Clean Architectureといえばバックエンドのコンテキストで語
 ## コーディングスタイル
 
 - Biomeによる自動フォーマット/Lint
-- コミット前に`pnpm check`を実行
+- コミット前に`bun check`を実行
 - TODOコメントには必ず`TODO TEST`のように内容を明記
 - ternary operatorを使わない
 - メソッド・関数の内部で「その処理を実行するかどうか」を判断させない

@@ -4,7 +4,7 @@ Vitestを使用しています。
 monorepoのすべてのテストを実施するには以下のコマンドを利用します。
 
 ```shell
-pnpm test
+bun examine
 ```
 
 ## テストの位置
