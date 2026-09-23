@@ -1,0 +1,24 @@
+{
+  "name": "@rlyeh/domains",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "clean": "rimraf .turbo coverage",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fp-ts": "2.16.11",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "rimraf": "6.1.3",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}
