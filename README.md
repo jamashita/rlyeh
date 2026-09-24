@@ -48,9 +48,4 @@ frontend の `/api` は `http://localhost:3001` にプロキシされる。
 
 ```sh
 curl http://localhost:3001/health
-curl http://localhost:3001/api/notes/0b6cbd5a-7f3d-4b2b-9a9c-0e6a2f2b1d44
 ```
-
-`Note` は各レイヤーの置き方を示すためのサンプルである。実装を始めるときは差し替える。
-`apps/backend/src/repository/NoteInMemoryRepository.ts` がインメモリの仮実装で、
-データストアを決めたらこのクラスを置き換える（`domains` のインターフェースは変えない）。
