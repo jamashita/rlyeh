@@ -23,10 +23,12 @@ describe('EmailAddress', () => {
       ${'taro@example'}
       ${'taro @example.com'}
       ${' taro@example.com'}
+      ${'taro"@example.com'}
+      ${'taro\n@example.com'}
     `('rejects $value', ({ value }: { value: string }) => {
       expect(EmailAddress.of(value)).toStrictEqual({
         _tag: 'Left',
-        left: { error: 'ParseError', message: `"${value}" is not a valid email address` }
+        left: { error: 'ParseError', message: `${JSON.stringify(value)} is not a valid email address` }
       });
     });
   });

@@ -16,7 +16,7 @@ export const EmailAddress = {
     const parsed = EmailAddressSchema.safeParse(value);
 
     if (!parsed.success) {
-      return left(createParseError(`"${value}" is not a valid email address`));
+      return left(createParseError(`${JSON.stringify(value)} is not a valid email address`));
     }
 
     return right(parsed.data);
