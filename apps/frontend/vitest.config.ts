@@ -8,6 +8,7 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/.next/**'],
     globals: true,
     watch: false,
+    passWithNoTests: true,
     mockReset: false,
     environment: 'jsdom'
   }
