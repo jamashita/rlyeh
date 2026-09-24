@@ -1,4 +1,14 @@
-import { constructNow, format as formatDate, isAfter, isBefore, isEqual, parseISO, toDate } from 'date-fns';
+import {
+  addMilliseconds,
+  constructNow,
+  differenceInMilliseconds,
+  format as formatDate,
+  isAfter,
+  isBefore,
+  isEqual,
+  parseISO,
+  toDate
+} from 'date-fns';
 import { type Either, left, right } from 'fp-ts/lib/Either.js';
 import { z } from 'zod';
 import { createParseError, type ParseError } from '../Error/index.js';
@@ -68,6 +78,21 @@ export class DateTime {
 
   public isBefore(other: DateTime): boolean {
     return isBefore(this.date, other.date);
+  }
+
+  /**
+   * A new `DateTime` the given number of milliseconds later (earlier when
+   * negative). This value does not change.
+   */
+  public plusMilliseconds(milliseconds: number): DateTime {
+    return new DateTime(addMilliseconds(this.date, milliseconds));
+  }
+
+  /**
+   * How many milliseconds this is after `other`; negative when it is before.
+   */
+  public millisecondsSince(other: DateTime): number {
+    return differenceInMilliseconds(this.date, other.date);
   }
 
   /**

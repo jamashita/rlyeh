@@ -17,11 +17,17 @@ export type QuestionID = z.infer<typeof QuestionIDSchema>;
  */
 export const NOT_IN_TEXT = 'not-in-text';
 
+/**
+ * Recorded when no choice was made within the time limit (AGENTS.md §14.2). It
+ * is never shown as a choice.
+ */
+export const UNANSWERED = 'unanswered';
+
 const OptionIDSchema = z
   .string()
   .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
   .refine((value) => {
-    return value !== NOT_IN_TEXT;
+    return value !== NOT_IN_TEXT && value !== UNANSWERED;
   })
   .brand<'OptionID'>();
 

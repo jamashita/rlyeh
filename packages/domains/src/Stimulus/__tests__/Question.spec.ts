@@ -1,4 +1,4 @@
-import { NOT_IN_TEXT, Question } from '../Question.js';
+import { NOT_IN_TEXT, Question, UNANSWERED } from '../Question.js';
 
 const valid = {
   id: 'q01',
@@ -27,6 +27,7 @@ describe('Question', () => {
       ${'woman-approached'}  | ${true}
       ${'two-hundred-years'} | ${true}
       ${NOT_IN_TEXT}         | ${false}
+      ${UNANSWERED}          | ${false}
       ${'Woman'}             | ${false}
       ${'woman_approached'}  | ${false}
       ${'-woman'}            | ${false}
