@@ -97,6 +97,36 @@ describe('DateTime', () => {
     });
   });
 
+  describe('plusMilliseconds', () => {
+    it.each`
+      milliseconds | expected
+      ${2000}      | ${'2026-09-24T00:00:02.000Z'}
+      ${0}         | ${'2026-09-24T00:00:00.000Z'}
+      ${-1}        | ${'2026-09-23T23:59:59.999Z'}
+    `('adds $milliseconds', ({ milliseconds, expected }: { milliseconds: number; expected: string }) => {
+      expect(dateTime('2026-09-24T00:00:00Z').plusMilliseconds(milliseconds).toISOString()).toBe(expected);
+    });
+
+    it('does not change the original value', () => {
+      const value = dateTime('2026-09-24T00:00:00Z');
+
+      value.plusMilliseconds(1000);
+
+      expect(value.toISOString()).toBe('2026-09-24T00:00:00.000Z');
+    });
+  });
+
+  describe('millisecondsSince', () => {
+    it.each`
+      left                          | right                         | expected
+      ${'2026-09-24T00:00:15.000Z'} | ${'2026-09-24T00:00:00.000Z'} | ${15000}
+      ${'2026-09-24T00:00:00.000Z'} | ${'2026-09-24T00:00:00.000Z'} | ${0}
+      ${'2026-09-24T00:00:00.000Z'} | ${'2026-09-24T00:00:00.500Z'} | ${-500}
+    `('returns $expected for $left since $right', ({ left, right, expected }: { left: string; right: string; expected: number }) => {
+      expect(dateTime(left).millisecondsSince(dateTime(right))).toBe(expected);
+    });
+  });
+
   describe('toDate', () => {
     it('returns a copy, so changing it does not change the DateTime', () => {
       const value = dateTime('2026-09-24T00:00:00Z');
