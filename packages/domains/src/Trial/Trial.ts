@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { NOT_IN_TEXT, type OptionID, Question, type QuestionID, UNANSWERED } from '../Stimulus/Question.js';
 import { Stimulus } from '../Stimulus/Stimulus.js';
 import { Response } from './Response.js';
+import { createTrialError, type TrialError } from './TrialError.js';
 
 /**
  * The text is shown for two seconds (AGENTS.md §2.3). The first question is not
@@ -47,6 +48,22 @@ export type TrialState = z.infer<typeof TrialStateSchema>;
  * Every transition takes the current time from the server; a time sent by the
  * client is never used to decide a transition (AGENTS.md §14.15).
  */
+const hasDuplicate = (values: ReadonlyArray<string>): boolean => {
+  return new Set(values).size !== values.length;
+};
+
+const isPermutationOf = (order: ReadonlyArray<string>, members: ReadonlyArray<string>): boolean => {
+  return order.length === members.length && !hasDuplicate(order) && order.every((value) => members.includes(value));
+};
+
+/**
+ * Besides the shape of each field, it keeps the parts in step, so a trial read
+ * back from storage is as consistent as one built by `create`:
+ * - every question appears once in `questionOrder` and has an option order of
+ *   five distinct options;
+ * - `responses` answer the questions in `questionOrder`, in that order, each
+ *   with the option order it was shown with.
+ */
 const TrialSchema = z
   .object({
     stimulus: Stimulus.ID.schema,
@@ -55,21 +72,42 @@ const TrialSchema = z
     responses: z.array(Response.schema).readonly(),
     state: TrialStateSchema
   })
-  .readonly();
+  .readonly()
+  .superRefine((trial, context) => {
+    if (hasDuplicate(trial.questionOrder)) {
+      context.addIssue({ code: 'custom', message: 'questionOrder has a question more than once' });
+    }
+    if (!isPermutationOf(Object.keys(trial.optionOrders), trial.questionOrder)) {
+      context.addIssue({ code: 'custom', message: 'optionOrders does not match questionOrder' });
+    }
+    for (const [question, options] of Object.entries(trial.optionOrders)) {
+      if (hasDuplicate(options)) {
+        context.addIssue({ code: 'custom', message: `the option order of ${question} has an option more than once` });
+      }
+    }
+    if (trial.responses.length > trial.questionOrder.length) {
+      context.addIssue({ code: 'custom', message: 'there are more responses than questions' });
+    }
+    trial.responses.forEach((response, index) => {
+      if (response.question !== trial.questionOrder[index]) {
+        context.addIssue({ code: 'custom', message: `response ${index} does not answer ${trial.questionOrder[index]}` });
+      }
+      if (!isPermutationOf(response.optionOrder, trial.optionOrders[response.question] ?? [])) {
+        context.addIssue({ code: 'custom', message: `response ${index} was not shown with the option order of ${response.question}` });
+      }
+    });
+  });
 
 export type Trial = z.infer<typeof TrialSchema>;
 
-export type TrialError = Readonly<{
-  error: 'TrialError';
-  message: string;
-}>;
-
-const trialError = (message: string): TrialError => {
-  return { error: 'TrialError', message };
-};
-
+/**
+ * - `stimulus` is the stimulus the trial is for; only its id and questions are
+ *   used.
+ * - `questionOrder` must be a shuffle of the stimulus' questions, and each of
+ *   `optionOrders` a shuffle of that question's options.
+ */
 export type CreateTrial = Readonly<{
-  stimulus: Trial['stimulus'];
+  stimulus: Pick<Stimulus, 'id' | 'questions'>;
   questionOrder: ReadonlyArray<QuestionID>;
   optionOrders: Readonly<Record<QuestionID, ReadonlyArray<OptionID>>>;
 }>;
@@ -101,14 +139,47 @@ const answeredAtOf = (choice: Response['choice'], now: DateTime): Nullable<DateT
 export const Trial = {
   schema: TrialSchema,
 
-  create: (params: CreateTrial): Trial => {
-    return {
-      stimulus: params.stimulus,
+  create: (params: CreateTrial): Either<TrialError, Trial> => {
+    const questions = params.stimulus.questions;
+
+    if (
+      !isPermutationOf(
+        params.questionOrder,
+        questions.map((question) => question.id)
+      )
+    ) {
+      return left(createTrialError('INVALID_QUESTION_ORDER', `questionOrder is not a shuffle of the questions of ${params.stimulus.id}`));
+    }
+
+    const mismatched = questions.find((question) => {
+      return !isPermutationOf(params.optionOrders[question.id] ?? [], question.options);
+    });
+
+    if (!Type.isUndefined(mismatched)) {
+      return left(createTrialError('INVALID_OPTION_ORDER', `the option order of ${mismatched.id} is not a shuffle of its options`));
+    }
+
+    return right({
+      stimulus: params.stimulus.id,
       questionOrder: params.questionOrder,
       optionOrders: params.optionOrders,
       responses: [],
       state: { kind: 'pending' }
-    };
+    });
+  },
+
+  /**
+   * Rebuilds a trial from values read back from storage, validating every field
+   * and how the parts agree.
+   */
+  of: (value: unknown): Either<TrialError, Trial> => {
+    const parsed = TrialSchema.safeParse(value);
+
+    if (!parsed.success) {
+      return left(createTrialError('INVALID_TRIAL', `not a valid trial: ${parsed.error.message}`));
+    }
+
+    return right(parsed.data);
   },
 
   /**
@@ -118,7 +189,7 @@ export const Trial = {
     const question = trial.questionOrder[trial.responses.length];
 
     if (trial.state.kind !== 'questioning' || Type.isUndefined(question)) {
-      return left(trialError('no question is being answered'));
+      return left(createTrialError('INVALID_STATE', 'no question is being answered'));
     }
 
     return right(question);
@@ -126,7 +197,7 @@ export const Trial = {
 
   present: (trial: Trial, now: DateTime): Either<TrialError, Trial> => {
     if (trial.state.kind !== 'pending') {
-      return left(trialError(`cannot present a ${trial.state.kind} trial`));
+      return left(createTrialError('INVALID_STATE', `cannot present a ${trial.state.kind} trial`));
     }
 
     return right({ ...trial, state: { kind: 'presenting', presentedAt: now } });
@@ -134,10 +205,10 @@ export const Trial = {
 
   startQuestions: (trial: Trial, now: DateTime): Either<TrialError, Trial> => {
     if (trial.state.kind !== 'presenting') {
-      return left(trialError(`cannot start questions on a ${trial.state.kind} trial`));
+      return left(createTrialError('INVALID_STATE', `cannot start questions on a ${trial.state.kind} trial`));
     }
     if (now.millisecondsSince(trial.state.presentedAt) < PRESENTATION_MILLISECONDS) {
-      return left(trialError('the text is still being presented'));
+      return left(createTrialError('STILL_PRESENTING', 'the text is still being presented'));
     }
 
     return right({ ...trial, state: { kind: 'questioning', presentedAt: trial.state.presentedAt, issuedAt: now } });
@@ -152,13 +223,13 @@ export const Trial = {
     const question = trial.questionOrder[trial.responses.length];
 
     if (trial.state.kind !== 'questioning' || Type.isUndefined(question)) {
-      return left(trialError(`cannot answer a ${trial.state.kind} trial`));
+      return left(createTrialError('INVALID_STATE', `cannot answer a ${trial.state.kind} trial`));
     }
 
     const optionOrder = optionOrderOf(trial, question);
 
     if (!Type.isNull(choice) && choice !== NOT_IN_TEXT && !optionOrder.includes(choice)) {
-      return left(trialError(`${choice} is not an option of ${question}`));
+      return left(createTrialError('UNKNOWN_OPTION', `${choice} is not an option of ${question}`));
     }
 
     const settled = settle(choice, trial.state.issuedAt, now);
@@ -180,7 +251,7 @@ export const Trial = {
 
   abandon: (trial: Trial, now: DateTime): Either<TrialError, Trial> => {
     if (trial.state.kind === 'completed' || trial.state.kind === 'abandoned') {
-      return left(trialError(`cannot abandon a ${trial.state.kind} trial`));
+      return left(createTrialError('INVALID_STATE', `cannot abandon a ${trial.state.kind} trial`));
     }
 
     return right({ ...trial, state: { kind: 'abandoned', abandonedAt: now } });

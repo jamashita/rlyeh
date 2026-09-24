@@ -2,7 +2,8 @@ import { DateTime } from '@rlyeh/lib/DateTime';
 import { type Either, isRight } from 'fp-ts/lib/Either.js';
 import { Question } from '../../Stimulus/Question.js';
 import { Stimulus } from '../../Stimulus/Stimulus.js';
-import { ANSWER_LIMIT_MILLISECONDS, PRESENTATION_MILLISECONDS, Trial, type TrialError } from '../Trial.js';
+import { ANSWER_LIMIT_MILLISECONDS, PRESENTATION_MILLISECONDS, Trial } from '../Trial.js';
+import type { TrialError } from '../TrialError.js';
 
 const T0 = DateTime.schema.parse('2026-09-24T00:00:00.000Z');
 
@@ -25,12 +26,22 @@ const unwrap = (result: Either<TrialError, Trial>): Trial => {
   return result.right;
 };
 
+const stimulus = {
+  id: Stimulus.ID.schema.parse('sample'),
+  questions: [
+    Question.schema.parse({
+      id: 'q01',
+      proposition: 'p01',
+      trope: 'subverted',
+      answer: 'woman',
+      options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd']
+    }),
+    Question.schema.parse({ id: 'q02', proposition: 'p02', trope: 'follows', answer: 'tree', options: ['tree', 'river', 'well', 'rock', 'fence'] })
+  ]
+};
+
 const pending = (): Trial => {
-  return Trial.create({
-    stimulus: Stimulus.ID.schema.parse('sample'),
-    questionOrder: [q02, q01],
-    optionOrders: { [q01]: q01Options, [q02]: q02Options }
-  });
+  return unwrap(Trial.create({ stimulus, questionOrder: [q02, q01], optionOrders: { [q01]: q01Options, [q02]: q02Options } }));
 };
 
 const presenting = (): Trial => unwrap(Trial.present(pending(), T0));
@@ -45,8 +56,8 @@ const completed = (): Trial => {
 
 const abandoned = (): Trial => unwrap(Trial.abandon(presenting(), at(500)));
 
-const expectTrialError = (result: Either<TrialError, unknown>): void => {
-  expect(result).toMatchObject({ _tag: 'Left', left: { error: 'TrialError' } });
+const expectTrialError = (result: Either<TrialError, unknown>, detail: TrialError['detail']): void => {
+  expect(result).toMatchObject({ _tag: 'Left', left: { error: 'TrialError', detail } });
 };
 
 describe('Trial', () => {
@@ -54,9 +65,41 @@ describe('Trial', () => {
     it('starts pending without responses', () => {
       const trial = pending();
 
+      expect(trial.stimulus).toBe('sample');
       expect(trial.state).toStrictEqual({ kind: 'pending' });
       expect(trial.responses).toStrictEqual([]);
       expect(trial.questionOrder).toStrictEqual(['q02', 'q01']);
+    });
+
+    it.each`
+      case                         | questionOrder
+      ${'a question is missing'}   | ${[q01]}
+      ${'a question is repeated'}  | ${[q01, q01]}
+      ${'a question is not in it'} | ${[q01, Question.ID.schema.parse('q03')]}
+    `('fails when $case in questionOrder', ({ questionOrder }: { questionOrder: Array<typeof q01> }) => {
+      expect(Trial.create({ stimulus, questionOrder, optionOrders: { [q01]: q01Options, [q02]: q02Options } })).toStrictEqual({
+        _tag: 'Left',
+        left: { error: 'TrialError', detail: 'INVALID_QUESTION_ORDER', message: 'questionOrder is not a shuffle of the questions of sample' }
+      });
+    });
+
+    it.each`
+      case                        | options
+      ${'an option is missing'}   | ${['woman', 'man', 'elder', 'blacksmith'].map(option)}
+      ${'an option is repeated'}  | ${['woman', 'woman', 'elder', 'blacksmith', 'shepherd'].map(option)}
+      ${'an option is not in it'} | ${['woman', 'man', 'elder', 'blacksmith', 'child'].map(option)}
+    `('fails when $case in an option order', ({ options }: { options: typeof q01Options }) => {
+      expect(Trial.create({ stimulus, questionOrder: [q02, q01], optionOrders: { [q01]: options, [q02]: q02Options } })).toStrictEqual({
+        _tag: 'Left',
+        left: { error: 'TrialError', detail: 'INVALID_OPTION_ORDER', message: 'the option order of q01 is not a shuffle of its options' }
+      });
+    });
+
+    it('fails when a question has no option order', () => {
+      expect(Trial.create({ stimulus, questionOrder: [q02, q01], optionOrders: { [q02]: q02Options } })).toStrictEqual({
+        _tag: 'Left',
+        left: { error: 'TrialError', detail: 'INVALID_OPTION_ORDER', message: 'the option order of q01 is not a shuffle of its options' }
+      });
     });
   });
 
@@ -72,7 +115,7 @@ describe('Trial', () => {
       ${'completed'}   | ${completed}
       ${'abandoned'}   | ${abandoned}
     `('fails on a $name trial, so the text is handed out only once', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.present(make(), at(10000)));
+      expectTrialError(Trial.present(make(), at(10000)), 'INVALID_STATE');
     });
   });
 
@@ -87,7 +130,7 @@ describe('Trial', () => {
     it('fails while the text is still being presented', () => {
       expect(Trial.startQuestions(presenting(), at(PRESENTATION_MILLISECONDS - 1))).toStrictEqual({
         _tag: 'Left',
-        left: { error: 'TrialError', message: 'the text is still being presented' }
+        left: { error: 'TrialError', detail: 'STILL_PRESENTING', message: 'the text is still being presented' }
       });
     });
 
@@ -98,7 +141,7 @@ describe('Trial', () => {
       ${'completed'}   | ${completed}
       ${'abandoned'}   | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.startQuestions(make(), at(10000)));
+      expectTrialError(Trial.startQuestions(make(), at(10000)), 'INVALID_STATE');
     });
   });
 
@@ -147,13 +190,13 @@ describe('Trial', () => {
         ['q01', 'woman']
       ]);
       expect(trial.state).toStrictEqual({ kind: 'completed', presentedAt: T0, completedAt: at(4000) });
-      expectTrialError(Trial.currentQuestion(trial));
+      expectTrialError(Trial.currentQuestion(trial), 'INVALID_STATE');
     });
 
     it('fails for a choice that is not an option of the current question', () => {
       expect(Trial.answer(questioning(), option('woman'), at(3000))).toStrictEqual({
         _tag: 'Left',
-        left: { error: 'TrialError', message: 'woman is not an option of q02' }
+        left: { error: 'TrialError', detail: 'UNKNOWN_OPTION', message: 'woman is not an option of q02' }
       });
     });
 
@@ -164,7 +207,7 @@ describe('Trial', () => {
       ${'completed'}  | ${completed}
       ${'abandoned'}  | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.answer(make(), option('tree'), at(3000)));
+      expectTrialError(Trial.answer(make(), option('tree'), at(3000)), 'INVALID_STATE');
     });
   });
 
@@ -187,7 +230,7 @@ describe('Trial', () => {
       ${'completed'} | ${completed}
       ${'abandoned'} | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.abandon(make(), at(9000)));
+      expectTrialError(Trial.abandon(make(), at(9000)), 'INVALID_STATE');
     });
   });
 
@@ -198,15 +241,27 @@ describe('Trial', () => {
       ${'presenting'} | ${presenting}
       ${'abandoned'}  | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.currentQuestion(make()));
+      expectTrialError(Trial.currentQuestion(make()), 'INVALID_STATE');
     });
   });
 
-  describe('schema', () => {
-    it('rebuilds a trial read back from storage', () => {
-      const stored = JSON.parse(JSON.stringify(completed()));
+  describe('of', () => {
+    const stored = () => JSON.parse(JSON.stringify(completed()));
 
-      expect(Trial.schema.parse(stored)).toStrictEqual(completed());
+    it('rebuilds a trial read back from storage', () => {
+      expect(Trial.of(stored())).toStrictEqual({ _tag: 'Right', right: completed() });
+    });
+
+    it.each`
+      case                                                | change
+      ${'questionOrder repeats a question'}               | ${(value: Record<string, unknown>) => ({ ...value, questionOrder: ['q01', 'q01'] })}
+      ${'optionOrders does not match questionOrder'}      | ${(value: Record<string, unknown>) => ({ ...value, optionOrders: { q01: q01Options } })}
+      ${'an option order repeats an option'}              | ${(value: Record<string, unknown>) => ({ ...value, optionOrders: { q01: ['woman', 'woman', 'elder', 'blacksmith', 'shepherd'], q02: q02Options } })}
+      ${'responses answer questions out of order'}        | ${(value: { responses: Array<unknown> }) => ({ ...value, responses: [...value.responses].reverse() })}
+      ${'there are more responses than questions'}        | ${(value: { responses: Array<unknown> }) => ({ ...value, responses: [...value.responses, ...value.responses] })}
+      ${'a response was shown with another option order'} | ${(value: { responses: Array<Record<string, unknown>> }) => ({ ...value, responses: value.responses.map((response) => ({ ...response, optionOrder: q01Options })) })}
+    `('fails when $case', ({ change }: { change: (value: never) => unknown }) => {
+      expectTrialError(Trial.of(change(stored() as never)), 'INVALID_TRIAL');
     });
   });
 });
