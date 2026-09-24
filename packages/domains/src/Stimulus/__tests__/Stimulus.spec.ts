@@ -17,7 +17,8 @@ const valid = () => {
     ],
     locales: {
       'ja-Jpan': {
-        text: '{p02:倒れた木のそばで}、{p01:美咲が}見つけた。',
+        text: '倒れた木のそばで、美咲が見つけた。',
+        spans: { p01: '美咲が', p02: '倒れた木のそばで' },
         notInText: '本文からはわからない',
         questions: {
           q01: { prompt: '誰が見つけましたか？', options: { man: '健太', woman: '美咲', elder: '長老', blacksmith: '鍛冶屋', shepherd: '羊飼い' } },
@@ -25,7 +26,8 @@ const valid = () => {
         }
       },
       'en-Latn': {
-        text: '{p01:Mira found it} {p02:near a fallen tree}.',
+        text: 'Mira found it near a fallen tree.',
+        spans: { p01: 'Mira found it', p02: 'near a fallen tree' },
         notInText: 'The text does not say',
         questions: {
           q01: {
@@ -131,16 +133,16 @@ describe('Stimulus', () => {
 
       expectInvalid({
         ...value,
-        locales: { ...value.locales, 'en-Latn': { ...value.locales['en-Latn'], text: '{p01:Mira found it} near a fallen tree.' } }
+        locales: { ...value.locales, 'en-Latn': { ...value.locales['en-Latn'], spans: { p01: 'Mira found it' } } }
       });
     });
 
-    it('rejects a text with a broken marker', () => {
+    it('rejects a quote that is not in the text', () => {
       const value = valid();
 
       expectInvalid({
         ...value,
-        locales: { ...value.locales, 'en-Latn': { ...value.locales['en-Latn'], text: '{p01:Mira found it {p02:near a fallen tree}.' } }
+        locales: { ...value.locales, 'en-Latn': { ...value.locales['en-Latn'], spans: { p01: 'Mira found it', p02: 'a fallen tree near' } } }
       });
     });
 

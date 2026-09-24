@@ -1,0 +1,282 @@
+# 本番用の刺激：市場で拾われた鍵の持ち主を探す話
+#
+# 構成は practice.yaml の冒頭のコメントを参照。
+# 登場人物（命題と選択肢 ID では役割で表す）:
+#   果物を売る女性（fruit-seller）: ja 由美 / en Lucy
+#   魚を売る男性（fish-seller）  : ja 健一 / en Tom
+#   麦わら帽子の少女（girl）     : 名前なし
+
+id: lost-key
+role: main
+
+propositions:
+  - id: p01
+    summary: 鍵を見つけたのは、市場で果物を売る女性である
+  - id: p02
+    summary: 鍵は店の前の水たまりの中にあった
+  - id: p03
+    summary: 鍵は緑色だった
+  - id: p04
+    summary: 鍵には小さな鈴と、三角形の木の札がついていた
+  - id: p05
+    summary: 女性は、隣で魚を売る男性に鍵を見せた
+  - id: p06
+    summary: 男性は、鍵に見覚えがないと言った
+  - id: p07
+    summary: 昼過ぎ、麦わら帽子をかぶった少女が店に来た
+  - id: p08
+    summary: 少女は、自転車の鍵をなくしたと話した
+  - id: p09
+    summary: 札の裏に書かれた名前は、少女の祖母の名前だった
+  - id: p10
+    summary: 少女は礼として、梨を二つ女性に渡した
+  - id: p11
+    summary: 少女は北の出口から帰った
+
+questions:
+  - id: q01
+    proposition: p01
+    trope: none
+    answer: fruit-seller
+    options: [fruit-seller, fish-seller, girl, flower-seller, guard]
+  - id: q02
+    proposition: p02
+    trope: follows
+    answer: puddle
+    options: [puddle, fruit-box, roof, fish-stand, stairs]
+  - id: q03
+    proposition: p03
+    trope: subverted
+    answer: green
+    options: [red, blue, green, black, gold]
+  - id: q04
+    proposition: p04
+    trope: subverted
+    answer: triangle
+    options: [circle, square, triangle, star, leaf]
+  - id: q05
+    proposition: p06
+    trope: follows
+    answer: never-seen
+    options: [never-seen, his-own, take-to-police, knows-owner, throw-away]
+  - id: q06
+    proposition: p08
+    trope: none
+    answer: bicycle
+    options: [house, bicycle, shed, box, car]
+  - id: q07
+    proposition: p09
+    trope: subverted
+    answer: grandmother
+    options: [girl-herself, grandmother, mother, fruit-seller, fish-seller]
+  - id: q08
+    proposition: p10
+    trope: none
+    answer: pears
+    options: [apples, pears, flowers, letter, coins]
+  - id: q09
+    proposition: p11
+    trope: none
+    answer: north
+    options: [north, northeast, south, east, west]
+  - id: q10
+    proposition: p08
+    trope: none
+    answer: not-in-text
+    options: [night-before, that-morning, weekend-before, day-before, three-days-before]
+
+locales:
+  ja-Jpan:
+    text: >-
+      雨上がりの朝、市場で果物を売る由美は、店の前の水たまりの中に緑色の鍵を見つけた。鍵には小さな鈴と、三角形の木の札がついていた。由美は隣で魚を売る健一に鍵を見せたが、健一は見覚えがないと言った。昼過ぎ、麦わら帽子をかぶった少女が店に来て、自転車の鍵をなくしたと話した。由美が鍵を渡すと、少女は札の裏に書かれた名前を指さし、それが祖母の名前だと説明した。少女は礼として、鞄から取り出した梨を二つ由美に渡し、北の出口から帰っていった。
+    spans:
+      p01: "市場で果物を売る由美"
+      p02: "店の前の水たまりの中"
+      p03: "緑色の鍵"
+      p04: "小さな鈴と、三角形の木の札"
+      p05: "由美は隣で魚を売る健一に鍵を見せた"
+      p06: "健一は見覚えがないと言った"
+      p07: "昼過ぎ、麦わら帽子をかぶった少女が店に来て"
+      p08: "自転車の鍵をなくしたと話した"
+      p09: "少女は札の裏に書かれた名前を指さし、それが祖母の名前だと説明した"
+      p10: "少女は礼として、鞄から取り出した梨を二つ由美に渡し"
+      p11: "北の出口から帰っていった"
+    notInText: 本文からはわからない
+    questions:
+      q01:
+        prompt: 鍵を見つけたのは誰ですか？
+        options:
+          fruit-seller: 果物を売る女性
+          fish-seller: 魚を売る男性
+          girl: 麦わら帽子の少女
+          flower-seller: 花を売る老人
+          guard: 市場の警備員
+      q02:
+        prompt: 鍵はどこで見つかりましたか？
+        options:
+          puddle: 店の前の水たまりの中
+          fruit-box: 果物の箱の中
+          roof: 店の屋根の上
+          fish-stand: 魚を並べた台の下
+          stairs: 市場の階段の下
+      q03:
+        prompt: 見つかった鍵は何色でしたか？
+        options:
+          red: 赤色
+          blue: 青色
+          green: 緑色
+          black: 黒色
+          gold: 金色
+      q04:
+        prompt: 鍵についていた木の札は、どんな形でしたか？
+        options:
+          circle: 丸
+          square: 四角
+          triangle: 三角形
+          star: 星形
+          leaf: 葉の形
+      q05:
+        prompt: 鍵を見せられた男性は、何と言いましたか？
+        options:
+          never-seen: 見覚えがないと言った
+          his-own: 自分の鍵だと言った
+          take-to-police: 警察に届けるよう言った
+          knows-owner: 持ち主を知っていると言った
+          throw-away: 捨てるよう言った
+      q06:
+        prompt: 少女は、何の鍵をなくしたと話しましたか？
+        options:
+          house: 家の鍵
+          bicycle: 自転車の鍵
+          shed: 物置の鍵
+          box: 箱の鍵
+          car: 車の鍵
+      q07:
+        prompt: 札の裏に書かれていたのは、誰の名前でしたか？
+        options:
+          girl-herself: 少女本人
+          grandmother: 少女の祖母
+          mother: 少女の母
+          fruit-seller: 果物を売る女性
+          fish-seller: 魚を売る男性
+      q08:
+        prompt: 少女は、お礼に何を渡しましたか？
+        options:
+          apples: りんご
+          pears: 梨
+          flowers: 花
+          letter: 手紙
+          coins: 硬貨
+      q09:
+        prompt: 少女は、どの出口から帰りましたか？
+        options:
+          north: 北の出口
+          northeast: 北東の出口
+          south: 南の出口
+          east: 東の出口
+          west: 西の出口
+      q10:
+        prompt: 少女が鍵をなくしたのは、いつですか？
+        options:
+          night-before: 前の晩
+          that-morning: その日の朝
+          weekend-before: 前の週末
+          day-before: 前の日の昼
+          three-days-before: 三日前
+  en-Latn:
+    text: >-
+      On the morning after the rain, Lucy, who sold fruit at the market, found a green key in a puddle in front of her stall. A small bell and a triangular wooden tag were attached to it. Lucy showed the key to Tom, who sold fish next to her, but Tom said he had never seen it. In the early afternoon, a girl in a straw hat came to the stall and said she had lost the key to her bicycle. When Lucy handed her the key, the girl pointed to a name written on the back of the tag and explained that it was her grandmother's. As thanks, the girl took two pears from her bag and gave them to Lucy, then left by the north exit.
+    spans:
+      p01: "Lucy, who sold fruit at the market,"
+      p02: "in a puddle in front of her stall"
+      p03: "a green key"
+      p04: "A small bell and a triangular wooden tag"
+      p05: "Lucy showed the key to Tom, who sold fish next to her"
+      p06: "Tom said he had never seen it"
+      p07: "In the early afternoon, a girl in a straw hat came to the stall"
+      p08: "and said she had lost the key to her bicycle"
+      p09: "the girl pointed to a name written on the back of the tag and explained that it was her grandmother's"
+      p10: "As thanks, the girl took two pears from her bag and gave them to Lucy"
+      p11: "then left by the north exit"
+    notInText: The text does not say
+    questions:
+      q01:
+        prompt: Who found the key?
+        options:
+          fruit-seller: The woman who sold fruit
+          fish-seller: The man who sold fish
+          girl: The girl in the straw hat
+          flower-seller: The old man who sold flowers
+          guard: A market guard
+      q02:
+        prompt: Where was the key found?
+        options:
+          puddle: In a puddle in front of the stall
+          fruit-box: In a box of fruit
+          roof: On the roof of the stall
+          fish-stand: Under the table of fish
+          stairs: Under the stairs of the market
+      q03:
+        prompt: What color was the key that was found?
+        options:
+          red: Red
+          blue: Blue
+          green: Green
+          black: Black
+          gold: Gold
+      q04:
+        prompt: What shape was the wooden tag on the key?
+        options:
+          circle: A circle
+          square: A square
+          triangle: A triangle
+          star: A star
+          leaf: A leaf
+      q05:
+        prompt: What did the man who was shown the key say?
+        options:
+          never-seen: That he had never seen it
+          his-own: That it was his own key
+          take-to-police: That she should take it to the police
+          knows-owner: That he knew whose it was
+          throw-away: That she should throw it away
+      q06:
+        prompt: What key did the girl say she had lost?
+        options:
+          house: The key to her house
+          bicycle: The key to her bicycle
+          shed: The key to a shed
+          box: The key to a box
+          car: The key to a car
+      q07:
+        prompt: Whose name was written on the back of the tag?
+        options:
+          girl-herself: The girl's own name
+          grandmother: The girl's grandmother's
+          mother: The girl's mother's
+          fruit-seller: The fruit seller's
+          fish-seller: The fish seller's
+      q08:
+        prompt: What did the girl give as thanks?
+        options:
+          apples: Apples
+          pears: Pears
+          flowers: Flowers
+          letter: A letter
+          coins: Coins
+      q09:
+        prompt: Which exit did the girl leave by?
+        options:
+          north: The north exit
+          northeast: The northeast exit
+          south: The south exit
+          east: The east exit
+          west: The west exit
+      q10:
+        prompt: When did the girl lose the key?
+        options:
+          night-before: The night before
+          that-morning: That morning
+          weekend-before: The weekend before
+          day-before: The afternoon before
+          three-days-before: Three days before

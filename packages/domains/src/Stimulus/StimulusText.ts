@@ -19,8 +19,6 @@ const PropositionSpanSchema = z
 
 export type PropositionSpan = z.infer<typeof PropositionSpanSchema>;
 
-const MARKER = /\{(p\d{2}):([^{}]*)\}/g;
-
 const SEGMENTER = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 const countGraphemes = (value: string): number => {
@@ -28,93 +26,96 @@ const countGraphemes = (value: string): number => {
 };
 
 /**
- * A span while the text is being scanned. The proposition id is still a plain
- * string here; it is checked and branded when the result goes through
- * `PropositionSpanSchema`.
+ * Where a quote was found in the text, in UTF-16 code units, before it is
+ * turned into graphemes.
  */
-const SpanSchema = z
+const LocationSchema = z
   .object({
-    proposition: z.string(),
-    start: z.number().int().nonnegative(),
-    end: z.number().int().nonnegative()
+    proposition: Proposition.ID.schema,
+    from: z.number().int().nonnegative(),
+    to: z.number().int().nonnegative()
   })
   .readonly();
 
-type Span = z.infer<typeof SpanSchema>;
+type Location = z.infer<typeof LocationSchema>;
 
-/**
- * The state carried through the scan: the text shown so far, the spans found so
- * far, and how many characters of the marked text have been read.
- */
-const ScanSchema = z
-  .object({
-    plain: z.string(),
-    spans: z.array(SpanSchema).readonly(),
-    consumed: z.number().int().nonnegative()
-  })
-  .readonly();
+const occurrencesOf = (text: string, quote: string): ReadonlyArray<number> => {
+  const first = text.indexOf(quote);
 
-type Scan = z.infer<typeof ScanSchema>;
+  if (first === -1) {
+    return [];
+  }
 
-const scan = (marked: string): Scan => {
-  return [...marked.matchAll(MARKER)].reduce<Scan>(
-    (acc, match) => {
-      const before = marked.slice(acc.consumed, match.index);
-      const content = match[2] ?? '';
-      const start = countGraphemes(acc.plain + before);
+  const second = text.indexOf(quote, first + 1);
 
-      return {
-        plain: acc.plain + before + content,
-        spans: [...acc.spans, { proposition: match[1] ?? '', start, end: start + countGraphemes(content) }],
-        consumed: match.index + match[0].length
-      };
-    },
-    { plain: '', spans: [], consumed: 0 }
-  );
+  if (second === -1) {
+    return [first];
+  }
+
+  return [first, second];
 };
 
-const findDuplicate = (spans: ReadonlyArray<Span>): string | undefined => {
-  return spans.map((span) => span.proposition).find((proposition, index, all) => all.indexOf(proposition) !== index);
+const toSpan = (text: string, location: Location): PropositionSpan => {
+  const start = countGraphemes(text.slice(0, location.from));
+
+  return {
+    proposition: location.proposition,
+    start,
+    end: start + countGraphemes(text.slice(location.from, location.to))
+  };
 };
 
 /**
  * A stimulus text in one language.
  *
- * Takes a text where each proposition is wrapped as `{p01:…}`, and gives
- * - `plain`: what the participant reads, with every marker removed;
+ * Takes
+ * - `text`: the text as the participant reads it;
+ * - `spans`: for each proposition, the part of `text` that states it, quoted
+ *   exactly;
+ *
+ * and gives
+ * - `plain`: the text as it is;
  * - `spans`: in the order they appear, where each proposition is written.
  *
- * Fails when a brace is left that is not part of a marker (a nested or broken
- * marker), or when one proposition is marked more than once.
+ * Fails when a quote is not in the text, appears more than once (quote a longer
+ * part so it is unique), or overlaps another quote.
  */
 const StimulusTextSchema = z
-  .string()
-  .transform((marked, context) => {
-    if (/[{}]/.test(marked.replaceAll(MARKER, ''))) {
-      context.addIssue({ code: 'custom', message: 'the text has a brace that is not part of a {pNN:…} marker' });
-
-      return z.NEVER;
-    }
-
-    const scanned = scan(marked);
-    const duplicate = findDuplicate(scanned.spans);
-
-    if (!Type.isUndefined(duplicate)) {
-      context.addIssue({ code: 'custom', message: `proposition ${duplicate} is marked more than once` });
-
-      return z.NEVER;
-    }
-
-    return { plain: scanned.plain + marked.slice(scanned.consumed), spans: scanned.spans };
+  .object({
+    text: z.string().min(1),
+    spans: z.record(Proposition.ID.schema, z.string().min(1))
   })
-  .pipe(
-    z
-      .object({
-        plain: z.string(),
-        spans: z.array(PropositionSpanSchema).readonly()
-      })
-      .readonly()
-  );
+  .transform((input, context): Readonly<{ plain: string; spans: ReadonlyArray<PropositionSpan> }> => {
+    const located = Object.entries(input.spans).flatMap(([proposition, quote]) => {
+      const occurrences = occurrencesOf(input.text, quote);
+
+      if (occurrences.length === 0) {
+        context.addIssue({ code: 'custom', message: `the quote of ${proposition} is not in the text` });
+
+        return [];
+      }
+      if (occurrences.length > 1) {
+        context.addIssue({ code: 'custom', message: `the quote of ${proposition} appears more than once; quote a longer part` });
+
+        return [];
+      }
+
+      const from = occurrences[0] ?? 0;
+
+      return [LocationSchema.parse({ proposition, from, to: from + quote.length })];
+    });
+    const ordered = located.toSorted((a, b) => a.from - b.from);
+
+    ordered.forEach((location, index) => {
+      const next = ordered[index + 1];
+
+      if (!Type.isUndefined(next) && location.to > next.from) {
+        context.addIssue({ code: 'custom', message: `the quotes of ${location.proposition} and ${next.proposition} overlap` });
+      }
+    });
+
+    return { plain: input.text, spans: ordered.map((location) => toSpan(input.text, location)) };
+  });
 
 export type StimulusText = z.infer<typeof StimulusTextSchema>;
 
@@ -125,8 +126,8 @@ export const StimulusText = {
     schema: PropositionSpanSchema
   },
 
-  parse: (marked: string): Either<ParseError, StimulusText> => {
-    const parsed = StimulusTextSchema.safeParse(marked);
+  parse: (value: unknown): Either<ParseError, StimulusText> => {
+    const parsed = StimulusTextSchema.safeParse(value);
 
     if (!parsed.success) {
       return left(createParseError(parsed.error.issues.map((issue) => issue.message).join('; ')));
