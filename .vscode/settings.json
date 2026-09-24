@@ -1,0 +1,42 @@
+{
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.biome": "explicit",
+      "source.organizeImports.biome": "explicit",
+      "source.organizeImports": "explicit",
+    }
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.biome": "explicit",
+      "source.organizeImports.biome": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "selection",
+  "editor.guides.bracketPairs": true,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "editor.inlineSuggest.enabled": true,
+  "editor.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "js/ts.inlayHints.variableTypes.enabled": true,
+  "js/ts.inlayHints.parameterTypes.enabled": true,
+  "js/ts.inlayHints.functionLikeReturnTypes.enabled": true,
+  "js/ts.inlayHints.parameterNames.enabled": "all",
+  "typescript.preferences.importModuleSpecifier": "relative"
+}
