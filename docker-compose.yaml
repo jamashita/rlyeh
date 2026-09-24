@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: rlyeh-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rlyeh
+      MYSQL_USER: rlyeh
+      MYSQL_PASSWORD: rlyeh
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql-data:/var/lib/mysql
+volumes:
+  mysql:
+
