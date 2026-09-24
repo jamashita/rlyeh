@@ -9,7 +9,9 @@ export default defineConfig({
     devtools(),
     tanstackRouter({
       target: 'react',
-      autoCodeSplitting: true
+      autoCodeSplitting: true,
+      // tsconfig uses moduleResolution "nodenext", which requires file extensions on relative imports
+      addExtensions: 'js'
     }),
     viteReact(),
     tailwindcss()

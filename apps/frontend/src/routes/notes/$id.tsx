@@ -1,9 +1,8 @@
 import type { NoteModel } from '@rlyeh/applications';
-import { createRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { match } from 'fp-ts/Either';
 import { pipe } from 'fp-ts/function';
-import { NoteClient } from '../api/NoteClient.js';
-import { rootRoute } from './RootRoute.js';
+import { NoteClient } from '../../api/NoteClient.js';
 
 type NoteRouteData = { readonly note: NoteModel } | { readonly error: string };
 
@@ -13,9 +12,7 @@ const noteClient = new NoteClient();
  * Fetching happens in the loader rather than inside the component, so the route
  * keeps working if this app later renders on the server.
  */
-export const noteRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/notes/$id',
+export const Route = createFileRoute('/notes/$id')({
   loader: async ({ params }): Promise<NoteRouteData> => {
     const result = await noteClient.findByID(params.id);
 
@@ -28,7 +25,7 @@ export const noteRoute = createRoute({
     );
   },
   component: () => {
-    const loaded = noteRoute.useLoaderData();
+    const loaded = Route.useLoaderData();
 
     if ('error' in loaded) {
       return <main role="alert">{loaded.error}</main>;
