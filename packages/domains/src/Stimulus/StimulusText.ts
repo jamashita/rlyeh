@@ -2,16 +2,7 @@ import { createParseError, type ParseError } from '@rlyeh/lib/Error';
 import { Type } from '@rlyeh/lib/Type';
 import { type Either, left, right } from 'fp-ts/lib/Either.js';
 import { z } from 'zod';
-
-const PropositionIDSchema = z
-  .string()
-  .regex(/^p\d{2}$/)
-  .brand<'PropositionID'>();
-
-/**
- * `p01`, `p02` and so on: a fact stated in the text, shared by every language.
- */
-export type PropositionID = z.infer<typeof PropositionIDSchema>;
+import { Proposition } from './Proposition.js';
 
 /**
  * Where a proposition is written in the text, counted in graphemes from the
@@ -20,7 +11,7 @@ export type PropositionID = z.infer<typeof PropositionIDSchema>;
  */
 const PropositionSpanSchema = z
   .object({
-    proposition: PropositionIDSchema,
+    proposition: Proposition.ID.schema,
     start: z.number().int().nonnegative(),
     end: z.number().int().nonnegative()
   })
@@ -129,10 +120,6 @@ export type StimulusText = z.infer<typeof StimulusTextSchema>;
 
 export const StimulusText = {
   schema: StimulusTextSchema,
-
-  PropositionID: {
-    schema: PropositionIDSchema
-  },
 
   PropositionSpan: {
     schema: PropositionSpanSchema
