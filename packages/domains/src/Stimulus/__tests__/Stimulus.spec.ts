@@ -1,6 +1,7 @@
 import { isRight } from 'fp-ts/lib/Either.js';
 import { Language } from '../../Language/Language.js';
-import { NOT_IN_TEXT, Stimulus } from '../Stimulus.js';
+import { NOT_IN_TEXT } from '../Question.js';
+import { Stimulus } from '../Stimulus.js';
 
 const valid = () => {
   return {

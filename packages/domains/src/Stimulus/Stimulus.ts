@@ -3,82 +3,19 @@ import { Type } from '@rlyeh/lib/Type';
 import { type Either, left, right } from 'fp-ts/lib/Either.js';
 import { z } from 'zod';
 import { Language, type LanguageTag } from '../Language/Language.js';
-import { StimulusText } from './StimulusText.js';
+import { Proposition } from './Proposition.js';
+import { NOT_IN_TEXT, Question } from './Question.js';
+import { StimulusLocale } from './StimulusLocale.js';
 
 const StimulusIDSchema = z.string().min(1).brand<'StimulusID'>();
 
 export type StimulusID = z.infer<typeof StimulusIDSchema>;
-
-const QuestionIDSchema = z
-  .string()
-  .regex(/^q\d{2}$/)
-  .brand<'QuestionID'>();
-
-export type QuestionID = z.infer<typeof QuestionIDSchema>;
-
-/**
- * The answer "the text does not say" (本文からはわからない). It is always shown as
- * the last choice, after the five concrete options (AGENTS.md §6).
- */
-export const NOT_IN_TEXT = 'not-in-text';
-
-const OptionIDSchema = z
-  .string()
-  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
-  .refine((value) => {
-    return value !== NOT_IN_TEXT;
-  })
-  .brand<'OptionID'>();
-
-/**
- * A concrete answer choice, shared by every language. The words shown for it
- * live in each language's locale.
- */
-export type OptionID = z.infer<typeof OptionIDSchema>;
 
 const LanguageTagSchema = z.custom<LanguageTag>((value) => {
   return Language.ALL.some((language) => {
     return Language.toTag(language) === value;
   });
 });
-
-const PropositionSchema = z
-  .object({
-    id: StimulusText.PropositionID.schema,
-    summary: z.string().min(1)
-  })
-  .readonly();
-
-/**
- * - `trope` tells whether the fact asked follows a common story pattern,
- *   departs from it, or has nothing to do with one (AGENTS.md §3.2).
- * - `answer` is one of `options`, or `not-in-text`.
- */
-const QuestionSchema = z
-  .object({
-    id: QuestionIDSchema,
-    proposition: StimulusText.PropositionID.schema,
-    trope: z.enum(['follows', 'subverted', 'none']),
-    answer: z.union([z.literal(NOT_IN_TEXT), OptionIDSchema]),
-    options: z.array(OptionIDSchema).length(5).readonly()
-  })
-  .readonly();
-
-const LocaleSchema = z
-  .object({
-    text: StimulusText.schema,
-    notInText: z.string().min(1),
-    questions: z.record(
-      QuestionIDSchema,
-      z
-        .object({
-          prompt: z.string().min(1),
-          options: z.record(OptionIDSchema, z.string().min(1)).readonly()
-        })
-        .readonly()
-    )
-  })
-  .readonly();
 
 const sameMembers = (left: ReadonlyArray<string>, right: ReadonlyArray<string>): boolean => {
   return left.length === right.length && left.every((value) => right.includes(value));
@@ -102,9 +39,9 @@ const StimulusSchema = z
   .object({
     id: StimulusIDSchema,
     role: z.enum(['practice', 'main']),
-    propositions: z.array(PropositionSchema).min(1).readonly(),
-    questions: z.array(QuestionSchema).min(1).readonly(),
-    locales: z.record(LanguageTagSchema, LocaleSchema).readonly()
+    propositions: z.array(Proposition.schema).min(1).readonly(),
+    questions: z.array(Question.schema).min(1).readonly(),
+    locales: z.record(LanguageTagSchema, StimulusLocale.schema).readonly()
   })
   .readonly()
   .superRefine((stimulus, context) => {
@@ -157,8 +94,6 @@ const StimulusSchema = z
   });
 
 export type Stimulus = z.infer<typeof StimulusSchema>;
-export type StimulusLocale = z.infer<typeof LocaleSchema>;
-export type Question = z.infer<typeof QuestionSchema>;
 
 export const Stimulus = {
   schema: StimulusSchema,
