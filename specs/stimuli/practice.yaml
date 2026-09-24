@@ -8,7 +8,8 @@
 #                 options は具体的な回答候補五つの ID。表示時にシャッフルし、「本文からはわからない」は常に最後に置く。
 #                 trope は設問で問う事実が物語の定番どおりか（follows）、定番から外したか（subverted）、
 #                 定番と関係しないか（none）を表す（AGENTS.md §3.2）。
-#   locales:      言語ごとの本文・設問文・選択肢の文言。
+#   locales:      言語ごとの本文・設問文・選択肢の文言。キーは Language のタグ（ja-Jpan、en-Latn）。
+#                 notInText は「本文からはわからない」の文言。
 #                 text では、各命題の内容を担う部分を {p01:…} の形で囲む（AGENTS.md §10）。
 #                   - すべての命題を各言語の本文でちょうど1回ずつ囲む。
 #                   - 囲みは入れ子にせず、重ねない。どの命題にも属さない部分は囲まなくてよい。
@@ -103,10 +104,10 @@ questions:
     options: [one, two, three, four, five]
 
 locales:
-  ja:
+  ja-Jpan:
     text: >-
       {p01:嵐の翌朝、美咲は村の東側にある畑を調べるため、村を出た。}{p03:倒れた木のそばで}、{p04:四つの白い円が描かれた黒い金属製の物体}を{p02:発見した}。{p05:彼女は村へ戻り、長老と健太という男性を現場へ連れてきた。}{p06:長老は物体に触れずにその周囲を調べたが}、{p07:健太は円の一つに手を触れた}。数秒後、{p08:円は黄色に変わり}、{p09:物体は人間の形をした機械へと変形した}。{p10:その機械は、美咲が近づくまで何も話さなかった}。そして、{p11:自分は長年地中に埋まっており}、{p12:嵐によってようやく地上に露出した}のだと説明した。村へ戻る前に、{p13:長老は再び場所が分かるよう、倒れた木に赤い布を結びつけた}。
-    not-in-text: 本文からはわからない
+    notInText: 本文からはわからない
     questions:
       q01:
         prompt: 何がきっかけで機械は話し始めましたか？
@@ -188,10 +189,10 @@ locales:
           three: 三つ
           four: 四つ
           five: 五つ
-  en:
+  en-Latn:
     text: >-
       {p01:The morning after a storm, Mira left her village to inspect the fields on its east side.} {p03:Near a fallen tree}, {p02:she discovered} {p04:a black metal object marked with four white circles}. {p05:She returned to the village and brought the elder and a man named Thomas to the site.} {p06:The elder examined the area around the object without touching it}, but {p07:Thomas placed his hand on one of the circles}. A few seconds later, {p08:the circles turned yellow} and {p09:the object transformed into a human-shaped machine}. {p10:The machine said nothing until Mira approached it}. It then explained that {p11:it had been buried underground for many years} and that {p12:the storm had finally exposed it}. Before returning to the village, {p13:the elder tied a red cloth to the fallen tree so that the location could be found again}.
-    not-in-text: The text does not say
+    notInText: The text does not say
     questions:
       q01:
         prompt: What caused the machine to start speaking?

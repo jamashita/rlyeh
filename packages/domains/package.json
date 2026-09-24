@@ -25,6 +25,14 @@
         "test": "./src/Participant/index.ts",
         "default": "./dist/Participant/index.js"
       }
+    },
+    "./Stimulus": {
+      "types": "./src/Stimulus/index.ts",
+      "import": {
+        "development": "./src/Stimulus/index.ts",
+        "test": "./src/Stimulus/index.ts",
+        "default": "./dist/Stimulus/index.js"
+      }
     }
   },
   "scripts": {
