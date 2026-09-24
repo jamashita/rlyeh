@@ -47,6 +47,23 @@ describe('DateTime', () => {
     });
   });
 
+  describe('of with values JSON.stringify cannot serialize', () => {
+    it('returns a ParseError for a BigInt instead of throwing', () => {
+      expect(DateTime.of(1n)).toStrictEqual({ _tag: 'Left', left: { error: 'ParseError', message: '1 is not a valid date-time' } });
+    });
+
+    it('returns a ParseError for a circular structure instead of throwing', () => {
+      const circular: Record<string, unknown> = {};
+
+      circular['self'] = circular;
+
+      expect(DateTime.of(circular)).toStrictEqual({
+        _tag: 'Left',
+        left: { error: 'ParseError', message: '[object Object] is not a valid date-time' }
+      });
+    });
+  });
+
   describe('now', () => {
     it('returns the current instant', () => {
       const before = Date.now();

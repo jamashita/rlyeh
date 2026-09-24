@@ -6,6 +6,12 @@ import { z } from 'zod';
 const ISO_639_1_FORMAT = /^[a-z]{2}$/;
 
 /**
+ * Creating an `Intl.DisplayNames` is costly, so one instance is shared by every
+ * validation.
+ */
+const LANGUAGE_NAMES = new Intl.DisplayNames(['en'], { type: 'language', fallback: 'none' });
+
+/**
  * `Intl.DisplayNames` throws on a malformed tag, so the format is checked first,
  * and only a well-formed code is looked up to see whether the language exists.
  */
@@ -14,7 +20,7 @@ const isKnownLanguage = (value: string): boolean => {
     return false;
   }
 
-  return !Type.isUndefined(new Intl.DisplayNames(['en'], { type: 'language', fallback: 'none' }).of(value));
+  return !Type.isUndefined(LANGUAGE_NAMES.of(value));
 };
 
 const ISO639Schema = z.string().refine(isKnownLanguage).brand<'ISO639'>();

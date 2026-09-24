@@ -5,6 +5,19 @@ import { createParseError, type ParseError } from '../Error/index.js';
 import { Type } from '../Type/index.js';
 
 /**
+ * Describes a rejected value for an error message. `JSON.stringify` throws on a
+ * `BigInt` or a circular structure, and a failed parse must still return a
+ * `ParseError` rather than throw, so it falls back to `String`.
+ */
+const describeValue = (value: unknown): string => {
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return String(value);
+  }
+};
+
+/**
  * An instant in time.
  *
  * `Date` is mutable and arrives as a string from JSON but as a `Date` from the
@@ -39,7 +52,7 @@ export class DateTime {
     const parsed = DateTime.schema.safeParse(value);
 
     if (!parsed.success) {
-      return left(createParseError(`${JSON.stringify(value)} is not a valid date-time`));
+      return left(createParseError(`${describeValue(value)} is not a valid date-time`));
     }
 
     return right(parsed.data);
