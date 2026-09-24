@@ -10,6 +10,14 @@
   "author": "jamashita <jamashita@arachnid.xyz>",
   "type": "module",
   "exports": {
+    "./Error": {
+      "types": "./src/Error/index.ts",
+      "import": {
+        "development": "./src/Error/index.ts",
+        "test": "./src/Error/index.ts",
+        "default": "./dist/Error/index.js"
+      }
+    },
     "./Logger": {
       "types": "./src/Logger/index.ts",
       "import": {
