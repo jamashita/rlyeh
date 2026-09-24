@@ -25,6 +25,14 @@
         "test": "./src/Logger/index.ts",
         "default": "./dist/Logger/index.js"
       }
+    },
+    "./Type": {
+      "types": "./src/Type/index.ts",
+      "import": {
+        "development": "./src/Type/index.ts",
+        "test": "./src/Type/index.ts",
+        "default": "./dist/Type/index.js"
+      }
     }
   },
   "scripts": {
