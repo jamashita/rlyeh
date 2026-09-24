@@ -1,9 +1,11 @@
 import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
+import { devtools } from '@tanstack/devtools-vite';
+import tanstackRouter from '@tanstack/router-plugin/vite';
+import viteReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    plugins: [
+  plugins: [
     devtools(),
     tanstackRouter({
       target: 'react',
@@ -22,5 +24,5 @@ export default defineConfig({
         changeOrigin: true
       }
     }
-  },
+  }
 });

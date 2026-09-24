@@ -3,21 +3,48 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "cache": false,
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "passThroughEnv": ["NODE_ENV"]
+    },
+    "check": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": []
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "dependsOn": [],
+      "outputs": [],
+      "persistent": true,
+      "passThroughEnv": ["NODE_ENV", "ADMIN_TOKEN"]
+    },
+    "format": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": []
+    },
+    "lint": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": []
+    },
+    "start": {
+      "cache": false,
+      "dependsOn": [],
+      "outputs": [],
+      "passThroughEnv": ["NODE_ENV", "ADMIN_TOKEN"]
     },
     "test": {
-      "dependsOn": ["^build"]
-    },
-    "typecheck": {
-      "dependsOn": ["^build"]
-    },
-    "clean": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^test"],
+      "outputs": []
     }
   }
 }

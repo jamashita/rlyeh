@@ -1,4 +1,4 @@
 {
-  "src/**/*.{ts,tsx}": "bun format && bun lint",
+  "src/**/*.{ts,tsx}": "biome check --write --unsafe --no-errors-on-unmatched",
   "package.json": "sort-package-json"
 }
