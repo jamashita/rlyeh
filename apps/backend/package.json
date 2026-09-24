@@ -2,25 +2,37 @@
   "name": "@rlyeh/backend",
   "version": "1.0.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jamashita/doigt.git"
+  },
   "license": "UNLICENSED",
+  "author": "tegebu <info@tegebu.com>",
   "type": "module",
   "scripts": {
-    "clean": "rimraf .turbo coverage",
-    "dev": "bun --watch src/index.ts",
-    "start": "bun src/index.ts",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "check": "biome check --write --unsafe src/*",
+    "clean": "rimraf dist",
+    "dev": "NODE_ENV=development bun run --conditions=development --watch src/server.ts",
+    "format": "biome format --write src/*",
+    "lint": "biome lint --write --unsafe src/*",
+    "start": "bun run src/server.ts",
+    "test": "vitest",
+    "upd": "bun upd:upgrade && bun upd:install",
+    "upd:install": "bun install && bun update && bun audit --fix",
+    "upd:upgrade": "ncu --packageManager bun --deep --upgrade"
   },
   "dependencies": {
     "@rlyeh/applications": "workspace:*",
     "@rlyeh/domains": "workspace:*",
     "@rlyeh/lib": "workspace:*",
     "fp-ts": "2.16.11",
-    "hono": "4.13.5"
+    "hono": "4.13.7",
+    "inversify": "8.2.3",
+    "reflect-metadata": "0.2.2",
+    "zod": "4.6.2"
   },
-  "devDependencies": {
-    "rimraf": "6.1.3",
-    "typescript": "5.9.3",
-    "vitest": "4.1.11"
-  }
+  "engines": {
+    "bun": ">=1.3.5"
+  },
+  "engineStrict": true
 }
