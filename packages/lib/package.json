@@ -10,6 +10,14 @@
   "author": "jamashita <jamashita@arachnid.xyz>",
   "type": "module",
   "exports": {
+    "./EmailAddress": {
+      "types": "./src/EmailAddress/index.ts",
+      "import": {
+        "development": "./src/EmailAddress/index.ts",
+        "test": "./src/EmailAddress/index.ts",
+        "default": "./dist/EmailAddress/index.js"
+      }
+    },
     "./Error": {
       "types": "./src/Error/index.ts",
       "import": {

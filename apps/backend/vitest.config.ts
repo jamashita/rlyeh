@@ -7,6 +7,8 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/.next/**'],
     globals: true,
     watch: false,
+    // TODO TEST: remove passWithNoTests once this package has its first test
+    passWithNoTests: true,
     mockReset: false,
     environment: 'node'
   }

@@ -1,13 +1,8 @@
-import { char, mysqlTable, text, varchar } from 'drizzle-orm/mysql-core';
-
 /**
- * Table definitions for Drizzle. Migrations are generated from this file with
- * `bun run db:generate`, so a column change starts here.
+ * Table definitions for Drizzle go in this file. Migrations are generated from it
+ * with `bun run drizzle:generate`, so a column change starts here.
+ *
+ * No table is defined yet: the Note sample was removed and the experiment's own
+ * tables have not been designed.
  */
-export const notes = mysqlTable('notes', {
-  id: char('id', { length: 36 }).primaryKey(),
-  title: varchar('title', { length: 120 }).notNull(),
-  body: text('body').notNull()
-});
-
-export type NoteRow = typeof notes.$inferSelect;
+export {};
