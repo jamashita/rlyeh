@@ -1,4 +1,4 @@
 {
-  "{apps,packages}/**/*.{ts,tsx}": "bun run format && bun run lint",
-  "**/package.json": "sort-package-json"
+  "src/**/*.{ts,tsx}": "bun format && bun lint",
+  "package.json": "sort-package-json"
 }
