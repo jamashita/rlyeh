@@ -8,11 +8,11 @@ import { Response } from './Response.js';
 import { createTrialError, type TrialError } from './TrialError.js';
 
 /**
- * The text is shown for two seconds (AGENTS.md §2.3). The first question is not
+ * The text is shown for five seconds (AGENTS.md §2.3). The first question is not
  * handed out before that, so no one can read the questions first and then look
  * for their answers in the text (AGENTS.md §14.15).
  */
-export const PRESENTATION_MILLISECONDS = 2000;
+export const PRESENTATION_MILLISECONDS = 5000;
 
 /**
  * Each question must be answered within fifteen seconds of being handed out

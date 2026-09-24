@@ -11,6 +11,14 @@ const at = (milliseconds: number): DateTime => {
   return T0.plusMilliseconds(milliseconds);
 };
 
+/**
+ * A time the given number of milliseconds after the text has been shown for its
+ * full time, when the first question is handed out.
+ */
+const afterPresentation = (milliseconds: number): DateTime => {
+  return at(PRESENTATION_MILLISECONDS + milliseconds);
+};
+
 const q01 = Question.ID.schema.parse('q01');
 const q02 = Question.ID.schema.parse('q02');
 const option = (value: string) => Question.OptionID.schema.parse(value);
@@ -49,9 +57,9 @@ const presenting = (): Trial => unwrap(Trial.present(pending(), T0));
 const questioning = (): Trial => unwrap(Trial.startQuestions(presenting(), at(PRESENTATION_MILLISECONDS)));
 
 const completed = (): Trial => {
-  const first = unwrap(Trial.answer(questioning(), option('tree'), at(3000)));
+  const first = unwrap(Trial.answer(questioning(), option('tree'), afterPresentation(1000)));
 
-  return unwrap(Trial.answer(first, option('woman'), at(4000)));
+  return unwrap(Trial.answer(first, option('woman'), afterPresentation(2000)));
 };
 
 const abandoned = (): Trial => unwrap(Trial.abandon(presenting(), at(500)));
@@ -115,12 +123,12 @@ describe('Trial', () => {
       ${'completed'}   | ${completed}
       ${'abandoned'}   | ${abandoned}
     `('fails on a $name trial, so the text is handed out only once', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.present(make(), at(10000)), 'INVALID_STATE');
+      expectTrialError(Trial.present(make(), afterPresentation(5000)), 'INVALID_STATE');
     });
   });
 
   describe('startQuestions', () => {
-    it('hands out the first question once the text has been shown for two seconds', () => {
+    it('hands out the first question once the text has been shown for its full time', () => {
       const trial = questioning();
 
       expect(trial.state).toStrictEqual({ kind: 'questioning', presentedAt: T0, issuedAt: at(PRESENTATION_MILLISECONDS) });
@@ -141,7 +149,7 @@ describe('Trial', () => {
       ${'completed'}   | ${completed}
       ${'abandoned'}   | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.startQuestions(make(), at(10000)), 'INVALID_STATE');
+      expectTrialError(Trial.startQuestions(make(), afterPresentation(5000)), 'INVALID_STATE');
     });
   });
 
@@ -149,15 +157,17 @@ describe('Trial', () => {
     const issuedAt = at(PRESENTATION_MILLISECONDS);
 
     it('records the choice and hands out the next question', () => {
-      const trial = unwrap(Trial.answer(questioning(), option('tree'), at(3000)));
+      const trial = unwrap(Trial.answer(questioning(), option('tree'), afterPresentation(1000)));
 
-      expect(trial.responses).toStrictEqual([{ question: 'q02', optionOrder: q02Options, choice: 'tree', issuedAt, answeredAt: at(3000) }]);
-      expect(trial.state).toStrictEqual({ kind: 'questioning', presentedAt: T0, issuedAt: at(3000) });
+      expect(trial.responses).toStrictEqual([
+        { question: 'q02', optionOrder: q02Options, choice: 'tree', issuedAt, answeredAt: afterPresentation(1000) }
+      ]);
+      expect(trial.state).toStrictEqual({ kind: 'questioning', presentedAt: T0, issuedAt: afterPresentation(1000) });
       expect(Trial.currentQuestion(trial)).toStrictEqual({ _tag: 'Right', right: 'q01' });
     });
 
     it('accepts "the text does not say"', () => {
-      const trial = unwrap(Trial.answer(questioning(), 'not-in-text', at(3000)));
+      const trial = unwrap(Trial.answer(questioning(), 'not-in-text', afterPresentation(1000)));
 
       expect(trial.responses[0]?.choice).toBe('not-in-text');
     });
@@ -177,7 +187,7 @@ describe('Trial', () => {
     });
 
     it('records the time running out as unanswered', () => {
-      const trial = unwrap(Trial.answer(questioning(), null, at(3000)));
+      const trial = unwrap(Trial.answer(questioning(), null, afterPresentation(1000)));
 
       expect(trial.responses[0]).toMatchObject({ choice: 'unanswered', answeredAt: null });
     });
@@ -189,12 +199,12 @@ describe('Trial', () => {
         ['q02', 'tree'],
         ['q01', 'woman']
       ]);
-      expect(trial.state).toStrictEqual({ kind: 'completed', presentedAt: T0, completedAt: at(4000) });
+      expect(trial.state).toStrictEqual({ kind: 'completed', presentedAt: T0, completedAt: afterPresentation(2000) });
       expectTrialError(Trial.currentQuestion(trial), 'INVALID_STATE');
     });
 
     it('fails for a choice that is not an option of the current question', () => {
-      expect(Trial.answer(questioning(), option('woman'), at(3000))).toStrictEqual({
+      expect(Trial.answer(questioning(), option('woman'), afterPresentation(1000))).toStrictEqual({
         _tag: 'Left',
         left: { error: 'TrialError', detail: 'UNKNOWN_OPTION', message: 'woman is not an option of q02' }
       });
@@ -207,7 +217,7 @@ describe('Trial', () => {
       ${'completed'}  | ${completed}
       ${'abandoned'}  | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.answer(make(), option('tree'), at(3000)), 'INVALID_STATE');
+      expectTrialError(Trial.answer(make(), option('tree'), afterPresentation(1000)), 'INVALID_STATE');
     });
   });
 
@@ -219,9 +229,9 @@ describe('Trial', () => {
       ${'questioning'} | ${questioning}
     `('abandons a $name trial and keeps its responses', ({ make }: { make: () => Trial }) => {
       const trial = make();
-      const result = unwrap(Trial.abandon(trial, at(9000)));
+      const result = unwrap(Trial.abandon(trial, afterPresentation(4000)));
 
-      expect(result.state).toStrictEqual({ kind: 'abandoned', abandonedAt: at(9000) });
+      expect(result.state).toStrictEqual({ kind: 'abandoned', abandonedAt: afterPresentation(4000) });
       expect(result.responses).toStrictEqual(trial.responses);
     });
 
@@ -230,7 +240,7 @@ describe('Trial', () => {
       ${'completed'} | ${completed}
       ${'abandoned'} | ${abandoned}
     `('fails on a $name trial', ({ make }: { make: () => Trial }) => {
-      expectTrialError(Trial.abandon(make(), at(9000)), 'INVALID_STATE');
+      expectTrialError(Trial.abandon(make(), afterPresentation(4000)), 'INVALID_STATE');
     });
   });
 
