@@ -2,6 +2,7 @@ import { createParseError, type ParseError } from '@rlyeh/lib/Error';
 import { Type } from '@rlyeh/lib/Type';
 import { type Either, left, right } from 'fp-ts/lib/Either.js';
 import { z } from 'zod';
+import type { ISO639 } from './ISO639.js';
 
 const LanguageSchema = z.union([
   z
@@ -19,21 +20,22 @@ const LanguageSchema = z.union([
 ]);
 
 export type Language = z.infer<typeof LanguageSchema>;
-export type ISO639 = Language['iso639'];
 export type ISO15924 = Language['iso15924'];
-export type LanguageTag = `${ISO639}-${ISO15924}`;
+export type LanguageTag = `${Language['iso639']}-${ISO15924}`;
 
-const JPN = {
+const JPN: Language = {
   iso639: 'ja',
   iso15924: 'Jpan'
 };
-const ENG = {
+const ENG: Language = {
   iso639: 'en',
   iso15924: 'Latn'
 };
-const ALL = [ENG, JPN] as Array<Language>;
+const ALL: ReadonlyArray<Language> = [ENG, JPN];
 
 export const Language = {
+  schema: LanguageSchema,
+
   JPN,
   ENG,
   ALL,

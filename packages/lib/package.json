@@ -10,6 +10,14 @@
   "author": "jamashita <jamashita@arachnid.xyz>",
   "type": "module",
   "exports": {
+    "./DateTime": {
+      "types": "./src/DateTime/index.ts",
+      "import": {
+        "development": "./src/DateTime/index.ts",
+        "test": "./src/DateTime/index.ts",
+        "default": "./dist/DateTime/index.js"
+      }
+    },
     "./EmailAddress": {
       "types": "./src/EmailAddress/index.ts",
       "import": {
@@ -55,6 +63,7 @@
     "upd:upgrade": "ncu --packageManager bun --deep --upgrade"
   },
   "dependencies": {
+    "date-fns": "4.4.0",
     "fp-ts": "2.16.11",
     "pino": "10.3.1",
     "pino-pretty": "13.1.3",
