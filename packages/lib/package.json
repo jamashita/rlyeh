@@ -10,7 +10,14 @@
   "author": "jamashita <jamashita@arachnid.xyz>",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    "./Logger": {
+      "types": "./src/Logger/index.ts",
+      "import": {
+        "development": "./src/Logger/index.ts",
+        "test": "./src/Logger/index.ts",
+        "default": "./dist/Logger/index.js"
+      }
+    }
   },
   "scripts": {
     "build": "bun clean && tsc",
