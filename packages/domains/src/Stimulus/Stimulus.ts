@@ -98,6 +98,10 @@ export type Stimulus = z.infer<typeof StimulusSchema>;
 export const Stimulus = {
   schema: StimulusSchema,
 
+  ID: {
+    schema: StimulusIDSchema
+  },
+
   /**
    * Builds a stimulus from values read from a stimulus file, validating every
    * field and how the parts agree.
