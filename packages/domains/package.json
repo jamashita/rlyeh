@@ -17,6 +17,14 @@
         "test": "./src/Language/index.ts",
         "default": "./dist/Language/index.js"
       }
+    },
+    "./Participant": {
+      "types": "./src/Participant/index.ts",
+      "import": {
+        "development": "./src/Participant/index.ts",
+        "test": "./src/Participant/index.ts",
+        "default": "./dist/Participant/index.js"
+      }
     }
   },
   "scripts": {
