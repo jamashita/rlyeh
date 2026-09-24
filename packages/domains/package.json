@@ -33,6 +33,14 @@
         "test": "./src/Stimulus/index.ts",
         "default": "./dist/Stimulus/index.js"
       }
+    },
+    "./Trial": {
+      "types": "./src/Trial/index.ts",
+      "import": {
+        "development": "./src/Trial/index.ts",
+        "test": "./src/Trial/index.ts",
+        "default": "./dist/Trial/index.js"
+      }
     }
   },
   "scripts": {
