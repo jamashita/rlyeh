@@ -1,0 +1,1 @@
+<!-- GitHub Copilot Code Review: When commenting on pull requests, please write in Japanese. -->
