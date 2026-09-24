@@ -102,6 +102,7 @@
       "name": "@rlyeh/domains",
       "version": "1.0.0",
       "dependencies": {
+        "@rlyeh/lib": "workspace:*",
         "fp-ts": "2.16.11",
         "zod": "4.6.5",
       },

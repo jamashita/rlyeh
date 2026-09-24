@@ -10,7 +10,14 @@
   "author": "jamashita <jamashita@arachnid.xyz>",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    "./Language": {
+      "types": "./src/Language/index.ts",
+      "import": {
+        "development": "./src/Language/index.ts",
+        "test": "./src/Language/index.ts",
+        "default": "./dist/Language/index.js"
+      }
+    }
   },
   "scripts": {
     "build": "bun clean && tsc",
@@ -24,6 +31,7 @@
     "upd:upgrade": "ncu --packageManager bun --deep --upgrade"
   },
   "dependencies": {
+    "@rlyeh/lib": "workspace:*",
     "fp-ts": "2.16.11",
     "zod": "4.6.5"
   },
