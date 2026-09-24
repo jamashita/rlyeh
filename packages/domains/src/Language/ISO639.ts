@@ -28,6 +28,8 @@ const ISO639Schema = z.string().refine(isKnownLanguage).brand<'ISO639'>();
 export type ISO639 = z.infer<typeof ISO639Schema>;
 
 export const ISO639 = {
+  schema: ISO639Schema,
+
   of: (value: string): Either<ParseError, ISO639> => {
     const parsed = ISO639Schema.safeParse(value);
 

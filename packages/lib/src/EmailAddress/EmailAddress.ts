@@ -7,6 +7,8 @@ const EmailAddressSchema = z.email().brand<'EmailAddress'>();
 export type EmailAddress = z.infer<typeof EmailAddressSchema>;
 
 export const EmailAddress = {
+  schema: EmailAddressSchema,
+
   /**
    * The value is kept exactly as given. Folding case or removing aliases is a
    * policy of whoever compares addresses, not a property of an address, so it

@@ -34,6 +34,8 @@ const ENG: Language = {
 const ALL: ReadonlyArray<Language> = [ENG, JPN];
 
 export const Language = {
+  schema: LanguageSchema,
+
   JPN,
   ENG,
   ALL,
