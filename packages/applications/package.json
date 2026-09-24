@@ -2,24 +2,40 @@
   "name": "@rlyeh/applications",
   "version": "1.0.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jamashita/doigt.git"
+  },
   "license": "UNLICENSED",
+  "author": "tegebu <info@tegebu.com>",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
-    "clean": "rimraf .turbo coverage",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "build": "bun clean && tsc",
+    "check": "biome check --write --unsafe src/*",
+    "clean": "rimraf dist",
+    "format": "biome format --write src/*",
+    "lint": "biome lint --write --unsafe src/*",
+    "test": "vitest",
+    "upd": "bun upd:upgrade && bun upd:install",
+    "upd:install": "bun install && bun update && bun audit --fix",
+    "upd:upgrade": "ncu --packageManager bun --deep --upgrade"
   },
   "dependencies": {
     "@rlyeh/domains": "workspace:*",
     "@rlyeh/lib": "workspace:*",
-    "fp-ts": "2.16.11"
+    "fp-ts": "2.16.11",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "rimraf": "6.1.3",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
-  }
+  },
+  "engines": {
+    "bun": ">=1.3.5"
+  },
+  "engineStrict": true
 }

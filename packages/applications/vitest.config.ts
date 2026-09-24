@@ -2,9 +2,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    name: 'applications',
-    include: ['src/**/__tests__/**/*.spec.ts'],
+    include: ['**/*.spec.ts', '**/*.spec.cts', '**/*.spec.mts', '**/*.spec.tsx'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.next/**'],
     globals: true,
-    watch: false
+    watch: false,
+    mockReset: false,
+    environment: 'jsdom'
   }
 });
