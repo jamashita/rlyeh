@@ -24,68 +24,90 @@
 id: practice
 role: practice
 
-# 設問の配分（AGENTS.md §4.1）:
-#   人物と行動の関係: q01, q04, q05, q07
-#   細部            : q03, q06
-#   状況            : q02
-#   本文からはわからない: q08
+# 設問の種類ごとの配分（AGENTS.md §4.1）:
+#   recognition（単語が見えれば答えられる）: q01, q02, q03, q04, q05
+#   relation（単語だけでは答えられない）  : q06, q07, q08
+#   inference（考える必要がある）         : q09
+#   not-in-text（本文からはわからない）   : q10
 
 propositions:
   - id: p01
-    summary: 嵐の翌朝、箱を見つけたのは女性である
+    summary: 出来事は嵐の翌朝に起きた
   - id: p02
-    summary: 箱は倒れた木のそばにあった
+    summary: 箱を見つけたのは女性である
   - id: p03
-    summary: 箱には白い円が四つ描かれていた
+    summary: 箱は倒れた木のそばにあった
   - id: p04
-    summary: 箱は黒かった
+    summary: 箱には白い円が四つ描かれていた
   - id: p05
-    summary: 女性は長老と男性を連れて戻った
+    summary: 箱は黒かった
   - id: p06
-    summary: 男性が円の一つに触れた
+    summary: 女性は長老と男性を連れて戻った
   - id: p07
-    summary: 触れられた円は黄色に光った
+    summary: 男性が円の一つに触れた
   - id: p08
+    summary: 触れられた円は黄色に光った
+  - id: p09
     summary: 箱は、長老が名前を呼ぶまで何も話さなかった
 
 questions:
   - id: q01
     proposition: p01
-    trope: subverted
-    answer: woman
-    options: [man, elder, woman, blacksmith, shepherd]
+    kind: recognition
+    trope: none
+    answer: storm-morning
+    options: [storm-morning, snowy-night, foggy-noon, rainy-evening, festival-morning]
   - id: q02
-    proposition: p02
+    proposition: p03
+    kind: recognition
     trope: follows
     answer: fallen-tree
     options: [fallen-tree, riverbank, old-well, under-rock, field-fence]
   - id: q03
-    proposition: p03
+    proposition: p04
+    kind: recognition
     trope: subverted
     answer: four
-    options: [one, two, three, four, five]
+    options: [two, three, four, five, six]
   - id: q04
     proposition: p05
+    kind: recognition
     trope: none
-    answer: elder-and-man
-    options: [elder-and-man, elder-only, man-only, blacksmith-and-shepherd, village-children]
+    answer: black
+    options: [black, brown, gray, red, green]
   - id: q05
-    proposition: p06
+    proposition: p08
+    kind: recognition
+    trope: subverted
+    answer: yellow
+    options: [yellow, blue, red, green, purple]
+  - id: q06
+    proposition: p02
+    kind: relation
+    trope: subverted
+    answer: woman
+    options: [man, elder, woman, blacksmith, shepherd]
+  - id: q07
+    proposition: p07
+    kind: relation
     trope: subverted
     answer: man
     options: [man, elder, woman, blacksmith, shepherd]
-  - id: q06
-    proposition: p07
-    trope: subverted
-    answer: yellow
-    options: [vanished, blue, red, yellow, stayed-white]
-  - id: q07
-    proposition: p08
-    trope: none
-    answer: name-called
-    options: [name-called, woman-approached, someone-sang, rain-started, group-leaving]
   - id: q08
-    proposition: p04
+    proposition: p09
+    kind: relation
+    trope: none
+    answer: elder-called
+    options: [elder-called, woman-called, man-called, someone-sang, rain-started]
+  - id: q09
+    proposition: p06
+    kind: inference
+    trope: none
+    answer: woman
+    options: [woman, elder, man, blacksmith, shepherd]
+  - id: q10
+    proposition: p05
+    kind: not-in-text
     trope: none
     answer: not-in-text
     options: [coins, letters, seeds, tools, cloth]
@@ -95,24 +117,25 @@ locales:
     text: >-
       嵐の翌朝、美咲は倒れた木のそばで、白い円が四つ描かれた黒い箱を見つけた。美咲が長老と健太を連れて戻ると、健太が円の一つに触れ、円は黄色に光った。箱は、長老が名前を呼ぶまで何も話さなかった。
     spans:
-      p01: "美咲は"
-      p02: "倒れた木のそば"
-      p03: "白い円が四つ"
-      p04: "黒い箱を見つけた"
-      p05: "美咲が長老と健太を連れて戻る"
-      p06: "健太が円の一つに触れ"
-      p07: "円は黄色に光った"
-      p08: "箱は、長老が名前を呼ぶまで何も話さなかった"
+      p01: "嵐の翌朝"
+      p02: "美咲は"
+      p03: "倒れた木のそば"
+      p04: "白い円が四つ"
+      p05: "黒い箱を見つけた"
+      p06: "美咲が長老と健太を連れて戻る"
+      p07: "健太が円の一つに触れ"
+      p08: "円は黄色に光った"
+      p09: "箱は、長老が名前を呼ぶまで何も話さなかった"
     notInText: 本文からはわからない
     questions:
       q01:
-        prompt: 箱を見つけたのは誰ですか？
+        prompt: 出来事が起きたのはいつですか？
         options:
-          man: 健太
-          elder: 長老
-          woman: 美咲
-          blacksmith: 鍛冶屋
-          shepherd: 羊飼い
+          storm-morning: 嵐の翌朝
+          snowy-night: 雪の夜
+          foggy-noon: 霧の昼
+          rainy-evening: 雨の夕方
+          festival-morning: 祭りの朝
       q02:
         prompt: 箱はどこで見つかりましたか？
         options:
@@ -124,20 +147,36 @@ locales:
       q03:
         prompt: 箱に描かれていた円はいくつでしたか？
         options:
-          one: 一つ
           two: 二つ
           three: 三つ
           four: 四つ
           five: 五つ
+          six: 六つ
       q04:
-        prompt: 箱を見つけた人は、誰を連れて戻りましたか？
+        prompt: 箱は何色でしたか？
         options:
-          elder-and-man: 長老と健太
-          elder-only: 長老だけ
-          man-only: 健太だけ
-          blacksmith-and-shepherd: 鍛冶屋と羊飼い
-          village-children: 村の子どもたち
+          black: 黒
+          brown: 茶色
+          gray: 灰色
+          red: 赤
+          green: 緑
       q05:
+        prompt: 触れられた円は何色に光りましたか？
+        options:
+          yellow: 黄色
+          blue: 青色
+          red: 赤色
+          green: 緑色
+          purple: 紫色
+      q06:
+        prompt: 箱を見つけたのは誰ですか？
+        options:
+          man: 健太
+          elder: 長老
+          woman: 美咲
+          blacksmith: 鍛冶屋
+          shepherd: 羊飼い
+      q07:
         prompt: 円に触れたのは誰ですか？
         options:
           man: 健太
@@ -145,23 +184,23 @@ locales:
           woman: 美咲
           blacksmith: 鍛冶屋
           shepherd: 羊飼い
-      q06:
-        prompt: 触れられた円はどうなりましたか？
-        options:
-          vanished: 消えた
-          blue: 青色に光った
-          red: 赤色に光った
-          yellow: 黄色に光った
-          stayed-white: 白いままだった
-      q07:
+      q08:
         prompt: 何がきっかけで、箱は話し始めましたか？
         options:
-          name-called: 長老が名前を呼んだ
-          woman-approached: 美咲が近づいた
+          elder-called: 長老が名前を呼んだ
+          woman-called: 美咲が名前を呼んだ
+          man-called: 健太が名前を呼んだ
           someone-sang: 誰かが歌を歌った
           rain-started: 雨が降り出した
-          group-leaving: 三人が立ち去ろうとした
-      q08:
+      q09:
+        prompt: 円に触れた人を、その場に連れてきたのは誰ですか？
+        options:
+          woman: 美咲
+          elder: 長老
+          man: 健太
+          blacksmith: 鍛冶屋
+          shepherd: 羊飼い
+      q10:
         prompt: 箱の中には何が入っていましたか？
         options:
           coins: 硬貨
@@ -173,24 +212,25 @@ locales:
     text: >-
       The morning after a storm, Mira found a black box with four white circles painted on it near a fallen tree. When Mira came back with the elder and Thomas, Thomas touched one of the circles, and it glowed yellow. The box said nothing until the elder called its name.
     spans:
-      p01: "Mira found"
-      p02: "near a fallen tree"
-      p03: "four white circles"
-      p04: "a black box"
-      p05: "Mira came back with the elder and Thomas"
-      p06: "Thomas touched one of the circles"
-      p07: "it glowed yellow"
-      p08: "The box said nothing until the elder called its name"
+      p01: "The morning after a storm"
+      p02: "Mira found"
+      p03: "near a fallen tree"
+      p04: "four white circles"
+      p05: "a black box"
+      p06: "Mira came back with the elder and Thomas"
+      p07: "Thomas touched one of the circles"
+      p08: "it glowed yellow"
+      p09: "The box said nothing until the elder called its name"
     notInText: The text does not say
     questions:
       q01:
-        prompt: Who found the box?
+        prompt: When did it happen?
         options:
-          man: Thomas
-          elder: The elder
-          woman: Mira
-          blacksmith: The blacksmith
-          shepherd: The shepherd
+          storm-morning: The morning after a storm
+          snowy-night: On a snowy night
+          foggy-noon: At noon in the fog
+          rainy-evening: On a rainy evening
+          festival-morning: On the morning of a festival
       q02:
         prompt: Where was the box found?
         options:
@@ -202,20 +242,36 @@ locales:
       q03:
         prompt: How many circles were painted on the box?
         options:
-          one: One
           two: Two
           three: Three
           four: Four
           five: Five
+          six: Six
       q04:
-        prompt: Who did the person who found the box come back with?
+        prompt: What color was the box?
         options:
-          elder-and-man: The elder and Thomas
-          elder-only: Only the elder
-          man-only: Only Thomas
-          blacksmith-and-shepherd: The blacksmith and the shepherd
-          village-children: Children from the village
+          black: Black
+          brown: Brown
+          gray: Gray
+          red: Red
+          green: Green
       q05:
+        prompt: What color did the touched circle glow?
+        options:
+          yellow: Yellow
+          blue: Blue
+          red: Red
+          green: Green
+          purple: Purple
+      q06:
+        prompt: Who found the box?
+        options:
+          man: Thomas
+          elder: The elder
+          woman: Mira
+          blacksmith: The blacksmith
+          shepherd: The shepherd
+      q07:
         prompt: Who touched a circle?
         options:
           man: Thomas
@@ -223,23 +279,23 @@ locales:
           woman: Mira
           blacksmith: The blacksmith
           shepherd: The shepherd
-      q06:
-        prompt: What happened to the circle that was touched?
-        options:
-          vanished: It vanished
-          blue: It glowed blue
-          red: It glowed red
-          yellow: It glowed yellow
-          stayed-white: It stayed white
-      q07:
+      q08:
         prompt: What made the box start speaking?
         options:
-          name-called: The elder called its name
-          woman-approached: Mira came closer
+          elder-called: The elder called its name
+          woman-called: Mira called its name
+          man-called: Thomas called its name
           someone-sang: Someone sang a song
           rain-started: It started to rain
-          group-leaving: The three began to leave
-      q08:
+      q09:
+        prompt: Who brought the person who touched the circle to the place?
+        options:
+          woman: Mira
+          elder: The elder
+          man: Thomas
+          blacksmith: The blacksmith
+          shepherd: The shepherd
+      q10:
         prompt: What was inside the box?
         options:
           coins: Coins

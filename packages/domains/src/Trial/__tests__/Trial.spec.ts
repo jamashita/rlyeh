@@ -40,11 +40,19 @@ const stimulus = {
     Question.schema.parse({
       id: 'q01',
       proposition: 'p01',
+      kind: 'relation',
       trope: 'subverted',
       answer: 'woman',
       options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd']
     }),
-    Question.schema.parse({ id: 'q02', proposition: 'p02', trope: 'follows', answer: 'tree', options: ['tree', 'river', 'well', 'rock', 'fence'] })
+    Question.schema.parse({
+      id: 'q02',
+      proposition: 'p02',
+      kind: 'recognition',
+      trope: 'follows',
+      answer: 'tree',
+      options: ['tree', 'river', 'well', 'rock', 'fence']
+    })
   ]
 };
 

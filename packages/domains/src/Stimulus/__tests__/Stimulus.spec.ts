@@ -12,8 +12,15 @@ const valid = () => {
       { id: 'p02', summary: 'The object was near a fallen tree' }
     ],
     questions: [
-      { id: 'q01', proposition: 'p01', trope: 'subverted', answer: 'woman', options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd'] },
-      { id: 'q02', proposition: 'p02', trope: 'follows', answer: NOT_IN_TEXT, options: ['tree', 'river', 'well', 'rock', 'fence'] }
+      {
+        id: 'q01',
+        proposition: 'p01',
+        kind: 'relation',
+        trope: 'subverted',
+        answer: 'woman',
+        options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd']
+      },
+      { id: 'q02', proposition: 'p02', kind: NOT_IN_TEXT, trope: 'follows', answer: NOT_IN_TEXT, options: ['tree', 'river', 'well', 'rock', 'fence'] }
     ],
     locales: {
       'ja-Jpan': {
@@ -95,6 +102,17 @@ describe('Stimulus', () => {
       const [first, second] = value.questions;
 
       expectInvalid({ ...value, questions: [{ ...first, answer: 'child' }, second] });
+    });
+
+    it.each`
+      case                                           | kind           | answer
+      ${'kind is not-in-text but the answer is not'} | ${NOT_IN_TEXT} | ${'woman'}
+      ${'the answer is not-in-text but kind is not'} | ${'relation'}  | ${NOT_IN_TEXT}
+    `('rejects a question where $case', ({ kind, answer }: { kind: string; answer: string }) => {
+      const value = valid();
+      const [first, second] = value.questions;
+
+      expectInvalid({ ...value, questions: [{ ...first, kind, answer }, second] });
     });
 
     it('rejects duplicate options', () => {

@@ -4,6 +4,7 @@ import { Response } from '../Response.js';
 const question = Question.schema.parse({
   id: 'q01',
   proposition: 'p01',
+  kind: 'relation',
   trope: 'subverted',
   answer: 'woman',
   options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd']
@@ -12,6 +13,7 @@ const question = Question.schema.parse({
 const notInTextQuestion = Question.schema.parse({
   id: 'q02',
   proposition: 'p02',
+  kind: 'not-in-text',
   trope: 'none',
   answer: 'not-in-text',
   options: ['ten-years', 'fifty-years', 'hundred-years', 'twenty-years', 'thirty-years']

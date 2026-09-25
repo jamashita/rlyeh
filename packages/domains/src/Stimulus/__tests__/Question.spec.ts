@@ -3,6 +3,7 @@ import { NOT_IN_TEXT, Question, UNANSWERED } from '../Question.js';
 const valid = {
   id: 'q01',
   proposition: 'p01',
+  kind: 'relation',
   trope: 'subverted',
   answer: 'woman',
   options: ['man', 'woman', 'elder', 'blacksmith', 'shepherd']
@@ -50,6 +51,7 @@ describe('Question', () => {
       field            | value
       ${'id'}          | ${'x01'}
       ${'proposition'} | ${'x01'}
+      ${'kind'}        | ${'guess'}
       ${'trope'}       | ${'unknown'}
       ${'answer'}      | ${'Woman'}
       ${'options'}     | ${['man', 'woman', 'elder', 'blacksmith']}
