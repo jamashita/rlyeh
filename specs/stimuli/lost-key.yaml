@@ -1,0 +1,294 @@
+# 本番用の刺激：市場で拾われた鍵の持ち主を探す話
+#
+# 構成は practice.yaml の冒頭のコメントを参照。
+# 登場人物（命題と選択肢 ID では役割で表す）:
+#   果物を売る女性（fruit-seller）: ja 由美 / en Lucy
+#   魚を売る男性（fish-seller）  : ja 健一 / en Tom
+#   麦わら帽子の少女（girl）     : 名前なし
+
+id: lost-key
+role: main
+
+# 設問の種類ごとの配分（AGENTS.md §4.1）:
+#   recognition（単語が見えれば答えられる）: q01, q02, q03, q04, q05
+#   relation（単語だけでは答えられない）  : q06, q07, q08
+#   inference（考える必要がある）         : q09
+#   not-in-text（本文からはわからない）   : q10
+
+propositions:
+  - id: p01
+    summary: 出来事は雨上がりの朝に起きた
+  - id: p02
+    summary: 鍵を拾ったのは、果物を売る女性である
+  - id: p03
+    summary: 鍵は店の前の水たまりにあった
+  - id: p04
+    summary: 鍵は緑色だった
+  - id: p05
+    summary: 隣で魚を売る男性は、鍵に見覚えがないと言った
+  - id: p06
+    summary: 昼過ぎ、少女が店に来た
+  - id: p07
+    summary: 少女は、鍵は祖母の物だと話した
+  - id: p08
+    summary: 鍵は自転車の鍵だった
+  - id: p09
+    summary: 少女は礼に梨を渡した
+  - id: p10
+    summary: 少女は北の出口から帰った
+
+questions:
+  - id: q01
+    proposition: p03
+    kind: recognition
+    trope: follows
+    answer: puddle
+    options: [puddle, roof, well, bench, stairs]
+  - id: q02
+    proposition: p04
+    kind: recognition
+    trope: subverted
+    answer: green
+    options: [green, red, blue, black, gold]
+  - id: q03
+    proposition: p08
+    kind: recognition
+    trope: none
+    answer: bicycle
+    options: [bicycle, house, shed, box, gate]
+  - id: q04
+    proposition: p09
+    kind: recognition
+    trope: none
+    answer: pears
+    options: [pears, apples, flowers, letter, coins]
+  - id: q05
+    proposition: p06
+    kind: recognition
+    trope: none
+    answer: early-afternoon
+    options: [early-afternoon, evening, midnight, next-day, dusk]
+  - id: q06
+    proposition: p02
+    kind: relation
+    trope: none
+    answer: fruit-seller
+    options: [fruit-seller, fish-seller, girl, flower-seller, guard]
+  - id: q07
+    proposition: p05
+    kind: relation
+    trope: follows
+    answer: fish-seller
+    options: [fish-seller, fruit-seller, girl, flower-seller, guard]
+  - id: q08
+    proposition: p07
+    kind: relation
+    trope: subverted
+    answer: grandmother
+    options: [grandmother, girl-herself, fruit-seller, fish-seller, mother]
+  - id: q09
+    proposition: p09
+    kind: inference
+    trope: none
+    answer: fruit
+    options: [fruit, fish, flowers, bread, vegetables]
+  - id: q10
+    proposition: p06
+    kind: not-in-text
+    trope: none
+    answer: not-in-text
+    options: [night-before, that-morning, weekend-before, day-before, three-days-before]
+
+locales:
+  ja-Jpan:
+    text: >-
+      雨上がりの朝、果物を売る由美は、店の前の水たまりで緑色の鍵を拾った。隣で魚を売る健一は、見覚えがないと言った。昼過ぎ、店に来た少女は、それは祖母の自転車の鍵だと話し、礼に梨を渡して北の出口から帰った。
+    spans:
+      p01: "雨上がりの朝"
+      p02: "果物を売る由美は"
+      p03: "店の前の水たまり"
+      p04: "緑色の鍵"
+      p05: "隣で魚を売る健一は、見覚えがないと言った"
+      p06: "昼過ぎ、店に来た少女"
+      p07: "祖母の"
+      p08: "自転車の鍵"
+      p09: "礼に梨を渡して"
+      p10: "北の出口から帰った"
+    notInText: 本文からはわからない
+    questions:
+      q01:
+        prompt: 鍵はどこで拾われましたか？
+        options:
+          puddle: 店の前の水たまり
+          roof: 店の屋根の上
+          well: 井戸の縁
+          bench: 長椅子の下
+          stairs: 階段の下
+      q02:
+        prompt: 拾われた鍵は何色でしたか？
+        options:
+          green: 緑色
+          red: 赤色
+          blue: 青色
+          black: 黒色
+          gold: 金色
+      q03:
+        prompt: 拾われたのは、何の鍵でしたか？
+        options:
+          bicycle: 自転車の鍵
+          house: 家の鍵
+          shed: 物置の鍵
+          box: 箱の鍵
+          gate: 門の鍵
+      q04:
+        prompt: 少女は、お礼に何を渡しましたか？
+        options:
+          pears: 梨
+          apples: りんご
+          flowers: 花
+          letter: 手紙
+          coins: 硬貨
+      q05:
+        prompt: 少女が店に来たのはいつですか？
+        options:
+          early-afternoon: 昼過ぎ
+          evening: 夕方
+          midnight: 真夜中
+          next-day: 次の日
+          dusk: 日暮れ
+      q06:
+        prompt: 鍵を拾ったのは誰ですか？
+        options:
+          fruit-seller: 果物を売る女性
+          fish-seller: 魚を売る男性
+          girl: 店に来た少女
+          flower-seller: 花を売る老人
+          guard: 市場の警備員
+      q07:
+        prompt: 鍵に見覚えがないと言ったのは誰ですか？
+        options:
+          fish-seller: 魚を売る男性
+          fruit-seller: 果物を売る女性
+          girl: 店に来た少女
+          flower-seller: 花を売る老人
+          guard: 市場の警備員
+      q08:
+        prompt: 少女は、鍵は誰の物だと話しましたか？
+        options:
+          grandmother: 少女の祖母
+          girl-herself: 少女本人
+          fruit-seller: 果物を売る女性
+          fish-seller: 魚を売る男性
+          mother: 少女の母
+      q09:
+        prompt: 少女がお礼を渡した相手は、何を売っている人ですか？
+        options:
+          fruit: 果物
+          fish: 魚
+          flowers: 花
+          bread: パン
+          vegetables: 野菜
+      q10:
+        prompt: 鍵がなくなったのは、いつですか？
+        options:
+          night-before: 前の晩
+          that-morning: その日の朝
+          weekend-before: 前の週末
+          day-before: 前の日の昼
+          three-days-before: 三日前
+  en-Latn:
+    text: >-
+      On the morning after the rain, Lucy, who sold fruit, picked up a green key from a puddle in front of her stall. Tom, who sold fish next to her, said he had never seen it. In the early afternoon, a girl came to the stall and said it was the key to her grandmother's bicycle. She gave Lucy pears as thanks and left by the north exit.
+    spans:
+      p01: "On the morning after the rain"
+      p02: "Lucy, who sold fruit, picked up"
+      p03: "a puddle in front of her stall"
+      p04: "a green key"
+      p05: "Tom, who sold fish next to her, said he had never seen it"
+      p06: "In the early afternoon, a girl came to the stall"
+      p07: "her grandmother's"
+      p08: "bicycle"
+      p09: "gave Lucy pears as thanks"
+      p10: "left by the north exit"
+    notInText: The text does not say
+    questions:
+      q01:
+        prompt: Where was the key picked up?
+        options:
+          puddle: A puddle in front of the stall
+          roof: On the roof of the stall
+          well: On the edge of a well
+          bench: Under a bench
+          stairs: Under the stairs
+      q02:
+        prompt: What color was the key that was picked up?
+        options:
+          green: Green
+          red: Red
+          blue: Blue
+          black: Black
+          gold: Gold
+      q03:
+        prompt: What was the key that was picked up for?
+        options:
+          bicycle: A bicycle
+          house: A house
+          shed: A shed
+          box: A box
+          gate: A gate
+      q04:
+        prompt: What did the girl give as thanks?
+        options:
+          pears: Pears
+          apples: Apples
+          flowers: Flowers
+          letter: A letter
+          coins: Coins
+      q05:
+        prompt: When did the girl come to the stall?
+        options:
+          early-afternoon: In the early afternoon
+          evening: In the evening
+          midnight: At midnight
+          next-day: The next day
+          dusk: At dusk
+      q06:
+        prompt: Who picked up the key?
+        options:
+          fruit-seller: The woman who sold fruit
+          fish-seller: The man who sold fish
+          girl: The girl who came to the stall
+          flower-seller: The old man who sold flowers
+          guard: A market guard
+      q07:
+        prompt: Who said they had never seen the key?
+        options:
+          fish-seller: The man who sold fish
+          fruit-seller: The woman who sold fruit
+          girl: The girl who came to the stall
+          flower-seller: The old man who sold flowers
+          guard: A market guard
+      q08:
+        prompt: Whose did the girl say the key was?
+        options:
+          grandmother: Her grandmother's
+          girl-herself: Her own
+          fruit-seller: The fruit seller's
+          fish-seller: The fish seller's
+          mother: Her mother's
+      q09:
+        prompt: What did the person the girl thanked sell?
+        options:
+          fruit: Fruit
+          fish: Fish
+          flowers: Flowers
+          bread: Bread
+          vegetables: Vegetables
+      q10:
+        prompt: When was the key lost?
+        options:
+          night-before: The night before
+          that-morning: That morning
+          weekend-before: The weekend before
+          day-before: The afternoon before
+          three-days-before: Three days before

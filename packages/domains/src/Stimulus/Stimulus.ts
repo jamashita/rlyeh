@@ -61,6 +61,9 @@ const StimulusSchema = z
       if (question.answer !== NOT_IN_TEXT && !question.options.includes(question.answer)) {
         context.addIssue({ code: 'custom', message: `the answer of ${question.id} is not one of its options` });
       }
+      if ((question.kind === NOT_IN_TEXT) !== (question.answer === NOT_IN_TEXT)) {
+        context.addIssue({ code: 'custom', message: `${question.id} must be of kind not-in-text exactly when its answer is not-in-text` });
+      }
       if (hasDuplicate(question.options)) {
         context.addIssue({ code: 'custom', message: `the options of ${question.id} are not unique` });
       }

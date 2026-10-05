@@ -1,7 +1,8 @@
 import { StimulusLocale } from '../StimulusLocale.js';
 
 const valid = {
-  text: '{p01:Mira found it}.',
+  text: 'Mira found it.',
+  spans: { p01: 'Mira found it' },
   notInText: 'The text does not say',
   questions: {
     q01: {
@@ -25,7 +26,7 @@ describe('StimulusLocale', () => {
 
     it.each`
       field          | value
-      ${'text'}      | ${'{p01:Mira found it.'}
+      ${'spans'}     | ${{ p01: 'Mira lost it' }}
       ${'notInText'} | ${''}
       ${'questions'} | ${{ x01: valid.questions.q01 }}
       ${'questions'} | ${{ q01: { prompt: '', options: valid.questions.q01.options } }}

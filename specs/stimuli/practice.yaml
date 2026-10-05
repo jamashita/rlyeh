@@ -10,11 +10,12 @@
 #                 定番と関係しないか（none）を表す（AGENTS.md §3.2）。
 #   locales:      言語ごとの本文・設問文・選択肢の文言。キーは Language のタグ（ja-Jpan、en-Latn）。
 #                 notInText は「本文からはわからない」の文言。
-#                 text では、各命題の内容を担う部分を {p01:…} の形で囲む（AGENTS.md §10）。
-#                   - すべての命題を各言語の本文でちょうど1回ずつ囲む。
-#                   - 囲みは入れ子にせず、重ねない。どの命題にも属さない部分は囲まなくてよい。
-#                   - 参加者に表示するときは囲みの記号を取り除く。
-#                   - 命題の位置（本文の先頭から何文字目か）は、囲みの開始位置と終了位置から書記素単位で数える。
+#                 text は参加者が読む本文そのもの。
+#                 spans には、命題ごとに、その内容を担う部分を本文からそのまま引用する（AGENTS.md §10.1）。
+#                   - すべての命題について、本文中にちょうど1回だけ現れる部分を引用する。
+#                     同じ語句が本文に2回以上現れる場合は、1回だけになるまで引用を長くする。
+#                   - 引用どうしは重ならないようにする。どの命題にも属さない部分は引用しなくてよい。
+#                   - 命題の位置（本文の先頭から何文字目か）は、引用が現れる位置から書記素単位で数える。
 #                 登場人物の名前は、各言語の母語話者にとって馴染みのある名前にする（言語ごとに異なってよい）。
 #                 命題と選択肢 ID では、名前ではなく「女性」「男性」で人物を表す。
 #                   女性（woman）: ja 美咲 / en Mira
@@ -23,254 +24,282 @@
 id: practice
 role: practice
 
+# 設問の種類ごとの配分（AGENTS.md §4.1）:
+#   recognition（単語が見えれば答えられる）: q01, q02, q03, q04, q05
+#   relation（単語だけでは答えられない）  : q06, q07, q08
+#   inference（考える必要がある）         : q09
+#   not-in-text（本文からはわからない）   : q10
+
 propositions:
   - id: p01
-    summary: 嵐の翌朝、女性が村の東側にある畑を調べるため村を出た
+    summary: 出来事は嵐の翌朝に起きた
   - id: p02
-    summary: 物体を発見したのは女性である
+    summary: 箱を見つけたのは女性である
   - id: p03
-    summary: 物体は倒れた木のそばで見つかった
+    summary: 箱は倒れた木のそばにあった
   - id: p04
-    summary: 物体は黒い金属製で、四つの白い円が描かれていた
+    summary: 箱には白い円が四つ描かれていた
   - id: p05
-    summary: 女性が村へ戻り、長老と男性を現場へ連れてきた
+    summary: 箱は黒かった
   - id: p06
-    summary: 長老は物体に触れずに周囲を調べた
+    summary: 女性は長老と男性を連れて戻った
   - id: p07
     summary: 男性が円の一つに触れた
   - id: p08
-    summary: 数秒後、円が黄色に変わった
+    summary: 触れられた円は黄色に光った
   - id: p09
-    summary: 物体が人間の形をした機械に変形した
-  - id: p10
-    summary: 機械は女性が近づくまで何も話さなかった
-  - id: p11
-    summary: 機械は自分が長年地中に埋まっていたと説明した
-  - id: p12
-    summary: 機械は嵐によって地上に露出したと説明した
-  - id: p13
-    summary: 長老が倒れた木に赤い布を結びつけた
+    summary: 箱は、長老が名前を呼ぶまで何も話さなかった
 
 questions:
   - id: q01
-    proposition: p10
-    trope: none
-    answer: woman-approached
-    options: [name-called, elder-spoke, woman-approached, group-leaving, sky-darkened]
-  - id: q02
-    proposition: p02
-    trope: subverted
-    answer: woman
-    options: [man, elder, woman, blacksmith, shepherd]
-  - id: q03
-    proposition: p13
-    trope: follows
-    answer: red-cloth
-    options: [white-stone, red-cloth, wooden-sign, blue-rope, metal-rod]
-  - id: q04
-    proposition: p07
-    trope: subverted
-    answer: man
-    options: [man, elder, woman, blacksmith, shepherd]
-  - id: q05
-    proposition: p11
-    trope: none
-    answer: not-in-text
-    options: [ten-years, twenty-five-years, fifty-years, hundred-years, two-hundred-years]
-  - id: q06
     proposition: p01
+    kind: recognition
     trope: none
-    answer: east
-    options: [north, northeast, east, south, west]
-  - id: q07
-    proposition: p12
-    trope: follows
-    answer: storm
-    options: [storm, lightning, flood, earthquake, wind]
-  - id: q08
-    proposition: p08
-    trope: subverted
-    answer: yellow
-    options: [vanished, blue, red, yellow, stayed-white]
-  - id: q09
+    answer: storm-morning
+    options: [storm-morning, snowy-night, foggy-noon, rainy-evening, festival-morning]
+  - id: q02
     proposition: p03
+    kind: recognition
     trope: follows
     answer: fallen-tree
     options: [fallen-tree, riverbank, old-well, under-rock, field-fence]
-  - id: q10
+  - id: q03
     proposition: p04
+    kind: recognition
     trope: subverted
     answer: four
-    options: [one, two, three, four, five]
+    options: [two, three, four, five, six]
+  - id: q04
+    proposition: p05
+    kind: recognition
+    trope: none
+    answer: black
+    options: [black, brown, gray, red, green]
+  - id: q05
+    proposition: p08
+    kind: recognition
+    trope: subverted
+    answer: yellow
+    options: [yellow, blue, red, green, purple]
+  - id: q06
+    proposition: p02
+    kind: relation
+    trope: subverted
+    answer: woman
+    options: [man, elder, woman, blacksmith, shepherd]
+  - id: q07
+    proposition: p07
+    kind: relation
+    trope: subverted
+    answer: man
+    options: [man, elder, woman, blacksmith, shepherd]
+  - id: q08
+    proposition: p09
+    kind: relation
+    trope: none
+    answer: elder-called
+    options: [elder-called, woman-called, man-called, someone-sang, rain-started]
+  - id: q09
+    proposition: p06
+    kind: inference
+    trope: none
+    answer: woman
+    options: [woman, elder, man, blacksmith, shepherd]
+  - id: q10
+    proposition: p05
+    kind: not-in-text
+    trope: none
+    answer: not-in-text
+    options: [coins, letters, seeds, tools, cloth]
 
 locales:
   ja-Jpan:
     text: >-
-      {p01:嵐の翌朝、美咲は村の東側にある畑を調べるため、村を出た。}{p03:倒れた木のそばで}、{p04:四つの白い円が描かれた黒い金属製の物体}を{p02:発見した}。{p05:彼女は村へ戻り、長老と健太という男性を現場へ連れてきた。}{p06:長老は物体に触れずにその周囲を調べたが}、{p07:健太は円の一つに手を触れた}。数秒後、{p08:円は黄色に変わり}、{p09:物体は人間の形をした機械へと変形した}。{p10:その機械は、美咲が近づくまで何も話さなかった}。そして、{p11:自分は長年地中に埋まっており}、{p12:嵐によってようやく地上に露出した}のだと説明した。村へ戻る前に、{p13:長老は再び場所が分かるよう、倒れた木に赤い布を結びつけた}。
+      嵐の翌朝、美咲は倒れた木のそばで、白い円が四つ描かれた黒い箱を見つけた。美咲が長老と健太を連れて戻ると、健太が円の一つに触れ、円は黄色に光った。箱は、長老が名前を呼ぶまで何も話さなかった。
+    spans:
+      p01: "嵐の翌朝"
+      p02: "美咲は"
+      p03: "倒れた木のそば"
+      p04: "白い円が四つ"
+      p05: "黒い箱を見つけた"
+      p06: "美咲が長老と健太を連れて戻る"
+      p07: "健太が円の一つに触れ"
+      p08: "円は黄色に光った"
+      p09: "箱は、長老が名前を呼ぶまで何も話さなかった"
     notInText: 本文からはわからない
     questions:
       q01:
-        prompt: 何がきっかけで機械は話し始めましたか？
+        prompt: 出来事が起きたのはいつですか？
         options:
-          name-called: 誰かが機械の名前を呼んだ
-          elder-spoke: 長老が機械に話しかけた
-          woman-approached: 美咲が機械に近づいた
-          group-leaving: 一行が立ち去ろうとした
-          sky-darkened: 空が急に暗くなった
+          storm-morning: 嵐の翌朝
+          snowy-night: 雪の夜
+          foggy-noon: 霧の昼
+          rainy-evening: 雨の夕方
+          festival-morning: 祭りの朝
       q02:
-        prompt: 金属製の物体を最初に発見したのは誰ですか？
-        options:
-          man: 健太
-          elder: 長老
-          woman: 美咲
-          blacksmith: 鍛冶屋
-          shepherd: 羊飼い
-      q03:
-        prompt: 長老はその場所の目印として何を使いましたか？
-        options:
-          white-stone: 白い石
-          red-cloth: 赤い布
-          wooden-sign: 木の標識
-          blue-rope: 青い縄
-          metal-rod: 金属製の棒
-      q04:
-        prompt: 最初に金属製の物体に触れたのは誰ですか？
-        options:
-          man: 健太
-          elder: 長老
-          woman: 美咲
-          blacksmith: 鍛冶屋
-          shepherd: 羊飼い
-      q05:
-        prompt: 機械は、何年間その場所にあったと説明しましたか？
-        options:
-          ten-years: 十年間
-          twenty-five-years: 二十五年間
-          fifty-years: 五十年間
-          hundred-years: 百年間
-          two-hundred-years: 二百年間
-      q06:
-        prompt: 本文に出てくる畑は、村のどちら側にありましたか？
-        options:
-          north: 北
-          northeast: 北東
-          east: 東
-          south: 南
-          west: 西
-      q07:
-        prompt: なぜ機械は地上に姿を現したのですか？
-        options:
-          storm: 嵐で地中から露出した
-          lightning: 雷に打たれて地面が裂けた
-          flood: 洪水で川から流れ着いた
-          earthquake: 地震の地割れから現れた
-          wind: 強風で山から転がってきた
-      q08:
-        prompt: 物体に触れたあと、円はどうなりましたか？
-        options:
-          vanished: 消えた
-          blue: 青色になった
-          red: 赤色になった
-          yellow: 黄色になった
-          stayed-white: 白色のままだった
-      q09:
-        prompt: 物体はどこで見つかりましたか？
+        prompt: 箱はどこで見つかりましたか？
         options:
           fallen-tree: 倒れた木のそば
           riverbank: 川岸
           old-well: 古い井戸の中
           under-rock: 大きな岩の下
           field-fence: 畑の柵の近く
-      q10:
-        prompt: 物体に描かれていた円はいくつでしたか？
+      q03:
+        prompt: 箱に描かれていた円はいくつでしたか？
         options:
-          one: 一つ
           two: 二つ
           three: 三つ
           four: 四つ
           five: 五つ
+          six: 六つ
+      q04:
+        prompt: 箱は何色でしたか？
+        options:
+          black: 黒
+          brown: 茶色
+          gray: 灰色
+          red: 赤
+          green: 緑
+      q05:
+        prompt: 触れられた円は何色に光りましたか？
+        options:
+          yellow: 黄色
+          blue: 青色
+          red: 赤色
+          green: 緑色
+          purple: 紫色
+      q06:
+        prompt: 箱を見つけたのは誰ですか？
+        options:
+          man: 健太
+          elder: 長老
+          woman: 美咲
+          blacksmith: 鍛冶屋
+          shepherd: 羊飼い
+      q07:
+        prompt: 円に触れたのは誰ですか？
+        options:
+          man: 健太
+          elder: 長老
+          woman: 美咲
+          blacksmith: 鍛冶屋
+          shepherd: 羊飼い
+      q08:
+        prompt: 何がきっかけで、箱は話し始めましたか？
+        options:
+          elder-called: 長老が名前を呼んだ
+          woman-called: 美咲が名前を呼んだ
+          man-called: 健太が名前を呼んだ
+          someone-sang: 誰かが歌を歌った
+          rain-started: 雨が降り出した
+      q09:
+        prompt: 円に触れた人を、その場に連れてきたのは誰ですか？
+        options:
+          woman: 美咲
+          elder: 長老
+          man: 健太
+          blacksmith: 鍛冶屋
+          shepherd: 羊飼い
+      q10:
+        prompt: 箱の中には何が入っていましたか？
+        options:
+          coins: 硬貨
+          letters: 手紙
+          seeds: 種
+          tools: 道具
+          cloth: 布
   en-Latn:
     text: >-
-      {p01:The morning after a storm, Mira left her village to inspect the fields on its east side.} {p03:Near a fallen tree}, {p02:she discovered} {p04:a black metal object marked with four white circles}. {p05:She returned to the village and brought the elder and a man named Thomas to the site.} {p06:The elder examined the area around the object without touching it}, but {p07:Thomas placed his hand on one of the circles}. A few seconds later, {p08:the circles turned yellow} and {p09:the object transformed into a human-shaped machine}. {p10:The machine said nothing until Mira approached it}. It then explained that {p11:it had been buried underground for many years} and that {p12:the storm had finally exposed it}. Before returning to the village, {p13:the elder tied a red cloth to the fallen tree so that the location could be found again}.
+      The morning after a storm, Mira found a black box with four white circles painted on it near a fallen tree. When Mira came back with the elder and Thomas, Thomas touched one of the circles, and it glowed yellow. The box said nothing until the elder called its name.
+    spans:
+      p01: "The morning after a storm"
+      p02: "Mira found"
+      p03: "near a fallen tree"
+      p04: "four white circles"
+      p05: "a black box"
+      p06: "Mira came back with the elder and Thomas"
+      p07: "Thomas touched one of the circles"
+      p08: "it glowed yellow"
+      p09: "The box said nothing until the elder called its name"
     notInText: The text does not say
     questions:
       q01:
-        prompt: What caused the machine to start speaking?
+        prompt: When did it happen?
         options:
-          name-called: Someone called the machine's name
-          elder-spoke: The elder spoke to the machine
-          woman-approached: Mira approached the machine
-          group-leaving: The group started to leave
-          sky-darkened: The sky suddenly grew dark
+          storm-morning: The morning after a storm
+          snowy-night: On a snowy night
+          foggy-noon: At noon in the fog
+          rainy-evening: On a rainy evening
+          festival-morning: On the morning of a festival
       q02:
-        prompt: Who first discovered the metal object?
-        options:
-          man: Thomas
-          elder: The elder
-          woman: Mira
-          blacksmith: The blacksmith
-          shepherd: The shepherd
-      q03:
-        prompt: What did the elder use to mark the location?
-        options:
-          white-stone: A white stone
-          red-cloth: A red cloth
-          wooden-sign: A wooden sign
-          blue-rope: A blue rope
-          metal-rod: A metal rod
-      q04:
-        prompt: Who was the first to touch the metal object?
-        options:
-          man: Thomas
-          elder: The elder
-          woman: Mira
-          blacksmith: The blacksmith
-          shepherd: The shepherd
-      q05:
-        prompt: How many years did the machine say it had been in that place?
-        options:
-          ten-years: Ten years
-          twenty-five-years: Twenty-five years
-          fifty-years: Fifty years
-          hundred-years: One hundred years
-          two-hundred-years: Two hundred years
-      q06:
-        prompt: On which side of the village were the fields mentioned in the text?
-        options:
-          north: North
-          northeast: Northeast
-          east: East
-          south: South
-          west: West
-      q07:
-        prompt: Why did the machine appear above ground?
-        options:
-          storm: A storm exposed it from underground
-          lightning: Lightning struck and split the ground open
-          flood: A flood washed it in from a river
-          earthquake: It emerged from a crack left by an earthquake
-          wind: Strong winds rolled it down from a mountain
-      q08:
-        prompt: After the object was touched, what happened to the circles?
-        options:
-          vanished: They disappeared
-          blue: They turned blue
-          red: They turned red
-          yellow: They turned yellow
-          stayed-white: They stayed white
-      q09:
-        prompt: Where was the object found?
+        prompt: Where was the box found?
         options:
           fallen-tree: Near a fallen tree
           riverbank: On a riverbank
           old-well: Inside an old well
           under-rock: Under a large rock
           field-fence: Near a field fence
-      q10:
-        prompt: How many circles were marked on the object?
+      q03:
+        prompt: How many circles were painted on the box?
         options:
-          one: One
           two: Two
           three: Three
           four: Four
           five: Five
+          six: Six
+      q04:
+        prompt: What color was the box?
+        options:
+          black: Black
+          brown: Brown
+          gray: Gray
+          red: Red
+          green: Green
+      q05:
+        prompt: What color did the touched circle glow?
+        options:
+          yellow: Yellow
+          blue: Blue
+          red: Red
+          green: Green
+          purple: Purple
+      q06:
+        prompt: Who found the box?
+        options:
+          man: Thomas
+          elder: The elder
+          woman: Mira
+          blacksmith: The blacksmith
+          shepherd: The shepherd
+      q07:
+        prompt: Who touched a circle?
+        options:
+          man: Thomas
+          elder: The elder
+          woman: Mira
+          blacksmith: The blacksmith
+          shepherd: The shepherd
+      q08:
+        prompt: What made the box start speaking?
+        options:
+          elder-called: The elder called its name
+          woman-called: Mira called its name
+          man-called: Thomas called its name
+          someone-sang: Someone sang a song
+          rain-started: It started to rain
+      q09:
+        prompt: Who brought the person who touched the circle to the place?
+        options:
+          woman: Mira
+          elder: The elder
+          man: Thomas
+          blacksmith: The blacksmith
+          shepherd: The shepherd
+      q10:
+        prompt: What was inside the box?
+        options:
+          coins: Coins
+          letters: Letters
+          seeds: Seeds
+          tools: Tools
+          cloth: Cloth

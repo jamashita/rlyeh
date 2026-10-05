@@ -40,6 +40,14 @@ export type OptionID = z.infer<typeof OptionIDSchema>;
 /**
  * A question about one proposition, shared by every language.
  *
+ * - `kind` tells what answering it takes (AGENTS.md §4.1):
+ *   - `recognition`: only the answer appears in the text, so seeing the word
+ *     is enough;
+ *   - `relation`: other options also appear in the text, so the relation
+ *     between them has to be read;
+ *   - `inference`: the answer follows from combining two or more statements in
+ *     the text;
+ *   - `not-in-text`: the text does not say.
  * - `trope` tells whether the fact asked follows a common story pattern,
  *   departs from it, or has nothing to do with one (AGENTS.md §3.2).
  * - `answer` is one of `options`, or `not-in-text`. Whether it really is one of
@@ -50,6 +58,7 @@ const QuestionSchema = z
   .object({
     id: QuestionIDSchema,
     proposition: Proposition.ID.schema,
+    kind: z.enum(['recognition', 'relation', 'inference', NOT_IN_TEXT]),
     trope: z.enum(['follows', 'subverted', 'none']),
     answer: z.union([z.literal(NOT_IN_TEXT), OptionIDSchema]),
     options: z.array(OptionIDSchema).length(5).readonly()
