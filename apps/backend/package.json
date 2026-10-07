@@ -30,9 +30,9 @@
     "@rlyeh/lib": "workspace:*",
     "drizzle-orm": "0.45.3",
     "fp-ts": "2.16.11",
-    "hono": "4.13.9",
+    "hono": "4.13.13",
     "inversify": "8.2.3",
-    "mysql2": "3.24.4",
+    "mysql2": "3.24.5",
     "reflect-metadata": "0.2.2",
     "zod": "4.6.2"
   },
