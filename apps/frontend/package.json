@@ -46,7 +46,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "5.3.1",
     "@storybook/addon-docs": "10.6.0",
-    "@storybook/addon-mcp": "10.6.0",
+    "@storybook/addon-mcp": "10.6.2",
     "@storybook/addon-onboarding": "10.6.0",
     "@storybook/addon-styling-webpack": "3.0.2",
     "@storybook/tanstack-react": "10.6.0",
