@@ -34,7 +34,7 @@
     "inversify": "8.2.3",
     "mysql2": "3.24.4",
     "reflect-metadata": "0.2.2",
-    "zod": "4.6.2"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "drizzle-kit": "0.31.11"
